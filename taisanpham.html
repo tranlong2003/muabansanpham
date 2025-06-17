@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Thêm sản phẩm</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <script>
+  if (localStorage.getItem("isAdmin") !== "true") {
+    window.location.href = "taisanpham-login.html";
+  }
+</script>
+
+  <div class="container">
+    <h2>📦 Thêm sản phẩm mới</h2>
+
+    <label>📸 Ảnh sản phẩm:</label><br />
+    <input type="file" id="imageInput" accept="image/*" /><br /><br />
+
+    <label>📱 Tên sản phẩm:</label><br />
+    <input type="text" id="productName" /><br /><br />
+
+    <label>📂 Loại (iphone / android / acc):</label><br />
+    <input type="text" id="productType" /><br /><br />
+
+    <button onclick="addProduct()">➕ Thêm sản phẩm</button>
+     <p><a href="index.html" style="color: blue;">⬅️ Quay lại trang chính</a></p>
+     <button onclick="resetRatings()">🔄 Reset đánh giá</button>
+  </div>
+    <p id="statusMsg"></p>
+  </div>
+
+ <script>
+  function addProduct() {
+    const name = document.getElementById("productName").value.trim();
+    const type = document.getElementById("productType").value.trim().toLowerCase();
+    const imageInput = document.getElementById("imageInput");
+
+    if (!name || !type || !imageInput.files[0]) {
+      alert("⚠️ Vui lòng nhập đầy đủ thông tin và chọn ảnh!");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      const imageData = e.target.result;
+
+      const product = { name, type, image: imageData };
+      const products = JSON.parse(localStorage.getItem("products") || "[]");
+      products.push(product);
+      localStorage.setItem("products", JSON.stringify(products));
+
+      alert("✅ Thêm sản phẩm thành công!");
+      document.getElementById("productName").value = "";
+      document.getElementById("productType").value = "";
+      document.getElementById("imageInput").value = "";
+    };
+
+    reader.readAsDataURL(imageInput.files[0]);
+  }
+  
+</script>
+<button onclick="logoutAdmin()">🚪 Đăng xuất</button>
+
+<script>
+  function logoutAdmin() {
+    localStorage.removeItem("isAdmin");
+    window.location.href = "taisanpham-login.html";
+  }
+</script>
