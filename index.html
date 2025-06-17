@@ -1,35 +1,40 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mua bán điện thoại của Trần Văn Long</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Shop Trần Văn Long</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="container">
-    <h1>📱 Mua bán điện thoại của Trần Văn Long</h1>
-    <p>Liên hệ Zalo: <a href="https://zalo.me/0337457055" target="_blank">0337457055</a></p>
+    <h1>📱 Mua bán điện thoại của <span>Trần Văn Long</span></h1>
+
+    <p class="zalo">
+      <img src="https://upload.wikimedia.org/wikipedia/vi/thumb/d/dc/Zalo_Logo.svg/256px-Zalo_Logo.svg.png" alt="Zalo" />
+      <a href="https://zalo.me/0337457055" target="_blank">0337457055</a>
+    </p>
 
     <h2>🔥 Sản phẩm nổi bật</h2>
     <div class="product">
-      <img src="https://via.placeholder.com/200x120.png?text=iPhone+11+Pro" alt="iPhone 11 Pro">
+      <img src="https://via.placeholder.com/300x180.png?text=iPhone+11+Pro" alt="iPhone 11 Pro">
       <h3>iPhone 11 Pro Max 64GB</h3>
-      <p>Giá: 7.500.000đ</p>
-      <button onclick="window.open('https://zalo.me/0337457055?text=Mình+quan+tâm+đến+iPhone+11+Pro+Max')">Inbox Zalo</button>
+      <p>💰 Giá: <strong>7.500.000đ</strong></p>
+      <button onclick="window.open('https://zalo.me/0337457055?text=Mình+quan+tâm+đến+iPhone+11+Pro+Max')">💬 Inbox Zalo</button>
     </div>
 
     <h2>⭐ Đánh giá shop</h2>
     <form id="ratingForm">
-      <label for="rating">Số sao (1-5):</label>
-      <input type="number" id="rating" name="rating" min="1" max="5" required>
-      <label for="comment">Nhận xét:</label>
-      <textarea id="comment" name="comment" required></textarea>
+      <label>Số sao (1-5):</label>
+      <input type="number" id="rating" min="1" max="5" required>
+      <label>Nhận xét:</label>
+      <textarea id="comment" required></textarea>
       <button type="submit">Gửi đánh giá</button>
     </form>
 
-    <h3>🌟 Trung bình đánh giá: <span id="avgRating">Đang tải...</span> sao</h3>
+    <div class="avg-rating">
+      🌟 Trung bình đánh giá: <span id="avgRating">Đang tải...</span> sao
+    </div>
   </div>
 
   <script src="script.js"></script>
