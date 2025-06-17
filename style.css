@@ -1,7 +1,7 @@
-/* style.css */
 body {
-  font-family: sans-serif;
-  background: #f5f5f5;
+  font-family: 'Segoe UI', sans-serif;
+  background: #f0f2f5;
+  margin: 0;
   padding: 20px;
   color: #333;
 }
@@ -10,37 +10,100 @@ body {
   max-width: 600px;
   margin: auto;
   background: #fff;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 0 10px #ccc;
+  padding: 24px;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
 }
 
-h1, h2, h3 {
+h1 {
+  font-size: 24px;
   color: #2a7;
+  margin-bottom: 10px;
+}
+
+h1 span {
+  color: #333;
+  font-weight: bold;
+}
+
+.zalo {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.zalo img {
+  width: 24px;
+  height: 24px;
+  margin-right: 8px;
+}
+
+.zalo a {
+  color: #0078ff;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+h2 {
+  color: #ff5722;
+  margin-top: 20px;
 }
 
 .product {
-  border: 1px solid #ccc;
-  padding: 10px;
-  border-radius: 8px;
-  margin-bottom: 20px;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 16px;
+  margin-top: 10px;
+  background-color: #fafafa;
 }
 
 .product img {
   width: 100%;
-  border-radius: 6px;
+  border-radius: 8px;
+}
+
+.product h3 {
+  margin: 12px 0 8px;
+  color: #2a7;
+}
+
+.product p {
+  margin: 0;
 }
 
 button {
+  margin-top: 12px;
   background: #2a7;
   color: white;
-  border: none;
   padding: 10px 16px;
-  border-radius: 6px;
+  border: none;
+  border-radius: 8px;
   cursor: pointer;
-  margin-top: 10px;
+  font-weight: bold;
+  transition: background 0.3s ease;
 }
 
 button:hover {
-  background: #1d5;
+  background: #228b52;
+}
+
+form {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+input, textarea {
+  margin-bottom: 12px;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+.avg-rating {
+  margin-top: 16px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #ff9800;
 }
