@@ -9,7 +9,7 @@
 <body>
     <script>
   if (localStorage.getItem("isAdmin") !== "true") {
-    window.location.href = "taisanpham-login.html";
+    window.location.href = "admin-login.html";
   }
 </script>
 
@@ -67,6 +67,6 @@
 <script>
   function logoutAdmin() {
     localStorage.removeItem("isAdmin");
-    window.location.href = "taisanpham-login.html";
+    window.location.href = "admin-login.html";
   }
 </script>
