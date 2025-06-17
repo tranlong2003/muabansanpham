@@ -1,15 +1,18 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Shop Trần Văn Long</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title> Mua bán điện thoại của Trần Văn Long</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" href="https://cdnv2.tgdd.vn/mwg-static/common/News/1569702/iphone%2016%20pro%20-%203.jpg" />
 </head>
 <body>
   <div class="container">
-    <h1>📱 Mua bán điện thoại của <span>Trần Văn Long</span></h1>
-    
+       <h1>📱 Mua bán điện thoại của <span class="highlight">Trần Văn Long</span></h1>
+    </p>
+
+    <h2>🔥 Sản phẩm nổi bật</h2>
      <div class="menu">
     <button class="active" onclick="filter('iphone')">iPhone</button>
     <button onclick="filter('android')">Android</button>
@@ -18,33 +21,38 @@
 
   <div class="grid" id="productGrid"></div>
 
-    <p class="zalo">
-      <img src="https://upload.wikimedia.org/wikipedia/vi/thumb/d/dc/Zalo_Logo.svg/256px-Zalo_Logo.svg.png" alt="Zalo" />
-      <a href="https://zalo.me/0337457055" target="_blank">0337457055</a>
-    </p>
+    <div class="rating-section">
 
-    <h2>🔥 Sản phẩm nổi bật</h2>
-    <div class="product">
-      <img src="https://via.placeholder.com/300x180.png?text=iPhone+11+Pro" alt="iPhone 11 Pro">
-      <h3>iPhone 11 Pro Max 64GB</h3>
-      <p>💰 Giá: <strong>7.500.000đ</strong></p>
-      <button onclick="window.open('https://zalo.me/0337457055?text=Mình+quan+tâm+đến+iPhone+11+Pro+Max')">💬 Inbox Zalo</button>
-    </div>
+ <h2>⭐ Đánh giá shop</h2>
 
-    <h2>⭐ Đánh giá shop</h2>
-    <form id="ratingForm">
-      <label>Số sao (1-5):</label>
-      <input type="number" id="rating" min="1" max="5" required>
-      <label>Nhận xét:</label>
-      <textarea id="comment" required></textarea>
-      <button type="submit">Gửi đánh giá</button>
-    </form>
-
-    <div class="avg-rating">
-      🌟 Trung bình đánh giá: <span id="avgRating">Đang tải...</span> sao
-    </div>
+<form id="ratingForm">
+  <div class="star-rating" id="starContainer">
+    <input type="radio" id="star5" name="rating" value="5"><label for="star5">★</label>
+    <input type="radio" id="star4" name="rating" value="4"><label for="star4">★</label>
+    <input type="radio" id="star3" name="rating" value="3"><label for="star3">★</label>
+    <input type="radio" id="star2" name="rating" value="2"><label for="star2">★</label>
+    <input type="radio" id="star1" name="rating" value="1"><label for="star1">★</label>
   </div>
 
+  <textarea id="comment" placeholder="Nhập đánh giá của bạn..."></textarea>
+  <button type="submit">✅ Gửi đánh giá</button>
+</form>
+
+<p id="avgRating">🌟 Trung bình đánh giá: Đang tải...</p>
+
+
+</div>
+    <div class="footer">
+       <p>© 2025 <strong>Mua bán điện thoại</strong> của <span class="highlight">Trần Văn Long</span>. <br/>Tất cả quyền được bảo lưu.</p>
+        <p></p>
+     📞 Liên hệ:
+    <a href="http://zalo.me/0337457055" target="_blank">Zalo</a> |
+    <a href="https://www.facebook.com/tranlongtrunggianuytin.2003" target="_blank">Facebook</a>
+  </p>
+
+  <p>📍 Địa chỉ: 
+    <a href="https://maps.app.goo.gl/VGHdL8mYkenGhmwF7" target="_blank">Tòa nhà Kim Ánh,78 Duy Tân, Cầu Giấy, Hà Nội</a>
   <script src="script.js"></script>
+  
 </body>
 </html>
