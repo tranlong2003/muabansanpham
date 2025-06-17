@@ -1,4 +1,3 @@
-// script.js
 const sheetUrl = 'https://script.google.com/macros/s/YOUR_SCRIPT_URL/exec';
 
 document.getElementById('ratingForm').addEventListener('submit', async (e) => {
