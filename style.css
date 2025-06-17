@@ -1,83 +1,304 @@
 body {
-  font-family: 'Segoe UI', sans-serif;
-  background: #f4f6f8;
+  font-family: "Segoe UI", sans-serif;
+  background: #f3f4f6;
   margin: 0;
   padding: 20px;
+  color: #333;
+}
+
+.container {
+  max-width: 700px;
+  margin: auto;
+  background: white;
+  padding: 25px 30px;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
 }
 
 h1 {
-  text-align: center;
-  color: #1a73e8;
+  font-size: 24px;
+  color: #2c7;
+  margin-bottom: 10px;
 }
 
-.menu {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.menu button {
-  margin: 0 10px;
-  padding: 10px 16px;
-  border: none;
-  border-radius: 8px;
-  background: #ccc;
-  cursor: pointer;
+.highlight {
+  color: #2c7;
   font-weight: bold;
-  transition: all 0.2s;
 }
 
-.menu button.active {
-  background: #1a73e8;
-  color: white;
-}
-
-.grid {
+.zalo-link {
+  margin-bottom: 25px;
   display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
-  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+.zalo-link img {
+  width: 24px;
+  height: 24px;
+}
+
+.zalo-link a {
+  text-decoration: none;
+  font-weight: bold;
+  color: #0077ff;
 }
 
 .product {
-  background: white;
+  border: 1px solid #ccc;
   border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  padding: 12px;
-  width: 260px;
-  transition: transform 0.2s;
-}
-
-.product:hover {
-  transform: translateY(-5px);
+  padding: 15px;
+  margin-bottom: 30px;
+  text-align: center;
 }
 
 .product img {
   width: 100%;
-  border-radius: 8px;
+  border-radius: 10px;
 }
 
 .product h3 {
-  margin: 8px 0;
-  font-size: 18px;
-  color: #333;
+  color: #222;
+  margin-top: 10px;
 }
 
-.product p {
-  margin: 4px 0;
-  color: #555;
-}
-
-.product button {
-  background: #2a7;
-  color: white;
-  padding: 8px 12px;
+button {
+  background: #2c7;
   border: none;
-  border-radius: 6px;
+  color: white;
+  padding: 10px 16px;
+  border-radius: 8px;
   margin-top: 10px;
   cursor: pointer;
-  transition: background 0.3s ease;
+  transition: 0.3s;
 }
 
-.product button:hover {
-  background: #1e5;
+button:hover {
+  background: #239b56;
+}
+
+form label {
+  display: block;
+  margin-top: 10px;
+}
+
+form input, form textarea {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+form textarea {
+  height: 80px;
+  resize: vertical;
+}
+
+.avg-rating {
+  margin-top: 25px;
+  font-size: 18px;
+  color: #f39c12;
+}
+.menu {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+.rating-section {
+  text-align: center;
+  max-width: 400px;
+  margin: 40px auto;
+  background: #fff;
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  font-family: Arial;
+}
+
+.stars {
+  display: flex;
+  justify-content: center;
+  margin: 10px 0;
+  font-size: 30px;
+  cursor: pointer;
+}
+
+.star {
+  color: #cccccc;
+  margin: 0 5px;
+  transition: color 0.2s;
+}
+
+.star.active,
+.star:hover,
+.star:hover ~ .star {
+  color: gold;
+}
+
+textarea {
+  width: 100%;
+  margin-top: 10px;
+  height: 80px;
+  resize: none;
+  border-radius: 8px;
+  padding: 8px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+button {
+  margin-top: 10px;
+  background: #10b981;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+#avgRating {
+  margin-top: 15px;
+  font-weight: bold;
+  color: #f59e0b;
+}
+.product-card {
+  width: 200px;
+  padding: 10px;
+  background: #f1f5f9;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.product-card img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+body {
+  font-family: Arial, sans-serif;
+  background: #f9f9f9;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  max-width: 800px;
+  margin: auto;
+  padding: 20px;
+  background: white;
+  border-radius: 10px;
+  margin-top: 20px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+h1, h2 {
+  color: #2c3e50;
+  text-align: center;
+}
+
+.highlight {
+  color: #e67e22;
+}
+
+input, select, button {
+  margin: 5px 0;
+  padding: 10px;
+  width: 100%;
+  font-size: 16px;
+}
+
+button {
+  background: #13c60d;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #f6065e;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.product-card {
+  background: #fefefe;
+  padding: 10px;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.product-card img {
+  width: 100%;
+  height: auto;
+  border-radius: 5px;
+}
+/* Đánh giá sao */
+.star-rating {
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+  gap: 5px;
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+.star-rating input[type="radio"] {
+  display: none;
+}
+
+.star-rating label {
+  color: lightgray;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+/* Khi sao được chọn và những sao trước đó */
+.star-rating input[type="radio"]:checked ~ label {
+  color: lightgray;
+}
+
+.star-rating input[type="radio"]:checked + label,
+.star-rating input[type="radio"]:checked + label ~ label {
+  color: gold;
+}
+
+/* Hover sao */
+.star-rating label:hover,
+.star-rating label:hover ~ label {
+  color: gold;
+}
+.footer {
+  background-color: #f0f0f0;
+  text-align: center;
+  padding: 20px;
+  font-size: 16px;
+  color: #333;
+  border-top: 2px solid #ccc;
+  margin-top: 40px;
+}
+
+.footer a {
+  color: #5e35b1;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.footer a:hover {
+  text-decoration: underline;
+  color: #7c4dff;
+}
+
+.footer .highlight {
+  color: #e91e63;
+  font-weight: bold;
 }
