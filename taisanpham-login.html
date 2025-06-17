@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <title>Đăng nhập Admin</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h2>🔒 Đăng nhập quản trị</h2>
+    <input type="text" id="username" placeholder="Tài khoản">
+    <input type="password" id="password" placeholder="Mật khẩu">
+    <button onclick="login()">Đăng nhập</button>
+    <p id="loginError" style="color:red;"></p>
+  </div>
+
+  <script>
+    function login() {
+      const user = document.getElementById("username").value;
+      const pass = document.getElementById("password").value;
+
+      if (user === "long200326" && pass === "long200326") {
+        localStorage.setItem("isAdmin", "true");
+        window.location.href = "taisanpham.html";
+      } else {
+        document.getElementById("loginError").innerText = "Sai tài khoản hoặc mật khẩu!";
+      }
+    }
+  </script>
+</body>
+</html>
