@@ -1,30 +1,26 @@
-const products = [
+const sheetUrl = 'https://script.google.com/macros/s/YOUR_SCRIPT_URL/exec';
 
-];
+document.getElementById('ratingForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const rating = document.getElementById('rating').value;
+  const comment = document.getElementById('comment').value;
 
-const grid = document.getElementById("productGrid");
-
-function renderProducts(filterType) {
-  grid.innerHTML = "";
-  const filtered = products.filter(p => p.type === filterType);
-  filtered.forEach(p => {
-    const div = document.createElement("div");
-    div.className = "product";
-    div.innerHTML = `
-      <img src="${p.image}" alt="${p.name}" />
-      <h3>${p.name}</h3>
-      <p>Giá: ${p.price}</p>
-      <button onclick="window.open('https://zalo.me/0337457055', '_blank')">Inbox Zalo</button>
-    `;
-    grid.appendChild(div);
+  const res = await fetch(sheetUrl, {
+    method: 'POST',
+    body: JSON.stringify({ rating, comment }),
+    headers: { 'Content-Type': 'application/json' }
   });
+
+  const result = await res.json();
+  alert(result.message);
+  document.getElementById('ratingForm').reset();
+  loadAvgRating();
+});
+
+async function loadAvgRating() {
+  const res = await fetch(sheetUrl);
+  const result = await res.json();
+  document.getElementById('avgRating').innerText = result.avg.toFixed(1);
 }
 
-function filter(type) {
-  document.querySelectorAll(".menu button").forEach(btn => btn.classList.remove("active"));
-  event.target.classList.add("active");
-  renderProducts(type);
-}
-
-// Mặc định hiển thị iPhone khi tải trang
-renderProducts("iphone");
+loadAvgRating();
