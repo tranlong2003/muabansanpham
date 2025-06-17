@@ -1,3 +1,4 @@
+// ====== DANH SÁCH SẢN PHẨM MẪU ======
 const products = [
   {
     name: "iPhone 11 Pro Max 64GB",
@@ -37,11 +38,56 @@ function renderProducts(filterType) {
   });
 }
 
+// Lọc sản phẩm khi bấm nút
 function filter(type) {
   document.querySelectorAll(".menu button").forEach(btn => btn.classList.remove("active"));
   event.target.classList.add("active");
   renderProducts(type);
 }
 
-// Mặc định hiển thị iPhone khi tải trang
-renderProducts("iphone");
+// ====== ĐÁNH GIÁ SAO ======
+let selectedRating = 0;
+
+// Gửi đánh giá
+document.getElementById("ratingForm").addEventListener("submit", function (e) {
+  e.preventDefault();
+
+  const rating = document.querySelector('input[name="rating"]:checked');
+  const comment = document.getElementById("comment").value.trim();
+
+  if (!rating) {
+    alert("Vui lòng chọn số sao.");
+    return;
+  }
+
+  const ratings = JSON.parse(localStorage.getItem("ratings") || "[]");
+  ratings.push({ rating: parseInt(rating.value), comment });
+  localStorage.setItem("ratings", JSON.stringify(ratings));
+
+  alert("✅ Đánh giá đã được ghi nhận. Cảm ơn bạn!");
+
+  this.reset();
+  renderAverageRating();
+});
+
+// Tính trung bình đánh giá
+function renderAverageRating() {
+  const ratings = JSON.parse(localStorage.getItem("ratings") || "[]");
+  if (ratings.length === 0) {
+    document.getElementById("avgRating").textContent = "🌟 Trung bình đánh giá: Chưa có";
+    return;
+  }
+  const total = ratings.reduce((sum, r) => sum + r.rating, 0);
+  const average = (total / ratings.length).toFixed(1);
+  document.getElementById("avgRating").textContent = `🌟 Trung bình đánh giá: ${average} (${ratings.length} lượt)`;
+}
+
+// Gọi khi tải trang
+renderAverageRating();
+function resetRatings() {
+  if (confirm("Bạn có chắc muốn xóa toàn bộ đánh giá không?")) {
+    localStorage.removeItem("ratings");
+    renderAverageRating();
+    alert("✅ Đã reset toàn bộ đánh giá.");
+  }
+}
