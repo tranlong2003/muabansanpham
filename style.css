@@ -1,60 +1,54 @@
 body {
   font-family: 'Segoe UI', sans-serif;
-  background: #f0f2f5;
+  background: #f4f6f8;
   margin: 0;
   padding: 20px;
-  color: #333;
-}
-
-.container {
-  max-width: 600px;
-  margin: auto;
-  background: #fff;
-  padding: 24px;
-  border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
 }
 
 h1 {
-  font-size: 24px;
-  color: #2a7;
-  margin-bottom: 10px;
+  text-align: center;
+  color: #1a73e8;
 }
 
-h1 span {
-  color: #333;
-  font-weight: bold;
-}
-
-.zalo {
-  display: flex;
-  align-items: center;
+.menu {
+  text-align: center;
   margin-bottom: 20px;
 }
 
-.zalo img {
-  width: 24px;
-  height: 24px;
-  margin-right: 8px;
-}
-
-.zalo a {
-  color: #0078ff;
+.menu button {
+  margin: 0 10px;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  background: #ccc;
+  cursor: pointer;
   font-weight: bold;
-  text-decoration: none;
+  transition: all 0.2s;
 }
 
-h2 {
-  color: #ff5722;
-  margin-top: 20px;
+.menu button.active {
+  background: #1a73e8;
+  color: white;
+}
+
+.grid {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .product {
-  border: 1px solid #ddd;
+  background: white;
   border-radius: 12px;
-  padding: 16px;
-  margin-top: 10px;
-  background-color: #fafafa;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  padding: 12px;
+  width: 260px;
+  transition: transform 0.2s;
+}
+
+.product:hover {
+  transform: translateY(-5px);
 }
 
 .product img {
@@ -63,47 +57,27 @@ h2 {
 }
 
 .product h3 {
-  margin: 12px 0 8px;
-  color: #2a7;
+  margin: 8px 0;
+  font-size: 18px;
+  color: #333;
 }
 
 .product p {
-  margin: 0;
+  margin: 4px 0;
+  color: #555;
 }
 
-button {
-  margin-top: 12px;
+.product button {
   background: #2a7;
   color: white;
-  padding: 10px 16px;
+  padding: 8px 12px;
   border: none;
-  border-radius: 8px;
+  border-radius: 6px;
+  margin-top: 10px;
   cursor: pointer;
-  font-weight: bold;
   transition: background 0.3s ease;
 }
 
-button:hover {
-  background: #228b52;
-}
-
-form {
-  margin-top: 16px;
-  display: flex;
-  flex-direction: column;
-}
-
-input, textarea {
-  margin-bottom: 12px;
-  padding: 10px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  font-size: 14px;
-}
-
-.avg-rating {
-  margin-top: 16px;
-  font-size: 16px;
-  font-weight: bold;
-  color: #ff9800;
+.product button:hover {
+  background: #1e5;
 }
