@@ -34,10 +34,10 @@ function renderProducts(filterType) {
     div.className = "product";
     div.innerHTML = `
       <h3>${p.name}</h3>
+ <button onclick="openImageList(['${p.image}'])">📸 Xem ảnh</button>
       <p>Giá: ${p.price}</p>
       <p>${p.description}</p>
       <button onclick="window.open('https://zalo.me/0337457055', '_blank')">Inbox Zalo</button>
-       <button onclick="openImageList(['${p.image}'])">Xem ảnh</button>
     `;
     grid.appendChild(div);
   });
@@ -113,15 +113,15 @@ async function fetchProductsFromSheet() {
 function openImageList(images) {
   const modal = document.getElementById("imageListModal");
   const content = document.getElementById("imageListContent");
-
   content.innerHTML = "";
+
   images.forEach(url => {
     const img = document.createElement("img");
     img.src = url;
     content.appendChild(img);
   });
 
-  modal.style.display = "block";
+  modal.style.display = "flex";
 }
 
 function closeImageListModal() {
