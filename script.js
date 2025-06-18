@@ -4,6 +4,10 @@ let products = [
     name: "iPhone 6s 32GB",
     price: "1.000.000đ",
     type: "iphone",
+     image: "https://cdn-img.upanhlaylink.com/view/image_2025061838fc79d2e5ad03d34e0ec0a0cee103fd.jpg",
+    image: "https://cdn-img.upanhlaylink.com/view/image_20250618b17154858e1f1719bdba64f671561600.jpg",
+    image: "https://cdn-img.upanhlaylink.com/view/image_20250618a582bdf43d778e1e19cf1ef78414b1df.jpg",
+    image: "https://cdn-img.upanhlaylink.com/view/image_20250618e0a427deca53dcef2860e227efc0bbb9.jpg",
     description:"Demo của Trần Văn Long",
   },
   {
