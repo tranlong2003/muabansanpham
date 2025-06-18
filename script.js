@@ -5,6 +5,7 @@ let products = [
     price: "7.500.000đ",
     image: "https://via.placeholder.com/260x160?text=iPhone+11+Pro",
     type: "iphone",
+    description:"Demo của Trần Văn Long",
   },
   {
     name: "Samsung Galaxy S21",
