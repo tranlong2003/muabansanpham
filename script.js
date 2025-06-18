@@ -1,5 +1,5 @@
 // ====== DANH SÁCH SẢN PHẨM MẪU ======
-const products = [
+let products = [
   {
     name: "iPhone 11 Pro Max 64GB",
     price: "7.500.000đ",
@@ -22,9 +22,13 @@ const products = [
 
 const grid = document.getElementById("productGrid");
 
+// Hàm hiển thị sản phẩm
 function renderProducts(filterType) {
+  const grid = document.getElementById("productGrid");
   grid.innerHTML = "";
+
   const filtered = products.filter(p => p.type === filterType);
+
   filtered.forEach(p => {
     const div = document.createElement("div");
     div.className = "product";
@@ -32,13 +36,15 @@ function renderProducts(filterType) {
       <img src="${p.image}" alt="${p.name}" />
       <h3>${p.name}</h3>
       <p>Giá: ${p.price}</p>
+      <p>${p.description}</p>
       <button onclick="window.open('https://zalo.me/0337457055', '_blank')">Inbox Zalo</button>
     `;
     grid.appendChild(div);
   });
 }
 
-// Lọc sản phẩm khi bấm nút
+
+// Hàm lọc sản phẩm khi bấm nút
 function filter(type) {
   document.querySelectorAll(".menu button").forEach(btn => btn.classList.remove("active"));
   event.target.classList.add("active");
@@ -91,3 +97,23 @@ function resetRatings() {
     alert("✅ Đã reset toàn bộ đánh giá.");
   }
 }
+
+// ====== TẢI SẢN PHẨM TỪ GOOGLE SHEET ======
+async function fetchProductsFromSheet() {
+  try {
+    const res = await fetch("https://script.google.com/macros/s/AKfycbweL4rf2TY0yco60V4xsmI4NExypm8dMCE83ilbJMUw-VruBkJRK30d3TU9vKr8y6wB/exec"); // thay bằng link của bạn
+    const data = await res.json();
+    products = data;
+    renderProducts("iphone"); // Hoặc render tất cả tùy bạn
+  } catch (error) {
+    console.error("❌ Lỗi tải sản phẩm từ Sheet:", error);
+  }
+}
+
+
+
+// Khi tải trang
+window.addEventListener("DOMContentLoaded", async () => {
+  await fetchProductsFromSheet();
+  renderProducts("iphone");  // mặc định hiển thị iphone
+});
