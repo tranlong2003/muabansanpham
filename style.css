@@ -297,32 +297,3 @@ button:hover {
   text-decoration: underline;
   color: #7c4dff;
 }
-.product-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.product-header h3 {
-  font-size: 18px;
-  margin: 0;
-}
-
-.btn-view {
-  background-color: #f1f1f1;
-  border: none;
-  border-radius: 6px;
-  padding: 6px 10px;
-  cursor: pointer;
-  font-size: 16px;
-  transition: background-color 0.2s ease;
-}
-
-.btn-view:hover {
-  background-color: #ddd;
-}
-
-.footer .highlight {
-  color: #e91e63;
-  font-weight: bold;
-}
