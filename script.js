@@ -109,6 +109,23 @@ async function fetchProductsFromSheet() {
   }
 }
 
+function openImageList(images) {
+  const modal = document.getElementById("imageListModal");
+  const content = document.getElementById("imageListContent");
+
+  content.innerHTML = "";
+  images.forEach(url => {
+    const img = document.createElement("img");
+    img.src = url;
+    content.appendChild(img);
+  });
+
+  modal.style.display = "block";
+}
+
+function closeImageListModal() {
+  document.getElementById("imageListModal").style.display = "none";
+}
 
 
 // Khi tải trang
