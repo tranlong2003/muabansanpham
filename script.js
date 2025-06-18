@@ -24,7 +24,6 @@ const grid = document.getElementById("productGrid");
 
 function renderProducts(filterType) {
   grid.innerHTML = "";
-  let products = JSON.parse(localStorage.getItem("products") || "[]");
   const filtered = products.filter(p => p.type === filterType);
   filtered.forEach(p => {
     const div = document.createElement("div");
@@ -38,7 +37,6 @@ function renderProducts(filterType) {
     grid.appendChild(div);
   });
 }
-
 
 // Lọc sản phẩm khi bấm nút
 function filter(type) {
