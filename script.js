@@ -37,6 +37,7 @@ function renderProducts(filterType) {
       <p>Giá: ${p.price}</p>
       <p>${p.description}</p>
       <button onclick="window.open('https://zalo.me/0337457055', '_blank')">Inbox Zalo</button>
+       <button onclick="openImageList(['${p.image}'])">Xem ảnh</button>
     `;
     grid.appendChild(div);
   });
