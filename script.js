@@ -39,7 +39,7 @@ function renderProducts(filterType) {
     div.innerHTML = `
       <div class="product-header">
   <h3>${p.name}</h3>
-  <button class="btn-view" onclick="openImageList(['${p.image}'])">📸</button>
+<button onclick="openImageList(['${p.image}'])">📸 Xem ảnh</button>
 </div>
       <p>Giá: ${p.price}</p>
       <p>${p.description}</p>
