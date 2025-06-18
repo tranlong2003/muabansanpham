@@ -53,6 +53,53 @@
   <p>📍 Địa chỉ: 
     <a href="https://maps.app.goo.gl/VGHdL8mYkenGhmwF7" target="_blank">Tòa nhà Kim Ánh,78 Duy Tân, Cầu Giấy, Hà Nội</a>
   <script src="script.js"></script>
-  
+  <!-- Modal hiển thị ảnh dọc -->
+<div id="imageListModal" class="modal" onclick="closeImageListModal()">
+  <div class="image-list-container" onclick="event.stopPropagation();">
+    <span class="close" onclick="closeImageListModal()">×</span>
+    <h2>Ảnh sản phẩm</h2>
+    <div id="imageListContent" class="image-list"></div>
+  </div>
+</div>
+
+<style>
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 999;
+  left: 0; top: 0;
+  width: 100%; height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.8);
+}
+
+.image-list-container {
+  background: white;
+  margin: 50px auto;
+  padding: 20px;
+  width: 90%;
+  max-width: 500px;
+  border-radius: 12px;
+  max-height: 90%;
+  overflow-y: auto;
+}
+
+.image-list img {
+  width: 100%;
+  margin-bottom: 10px;
+  border-radius: 8px;
+}
+
+.close {
+  position: absolute;
+  top: 20px;
+  right: 40px;
+  color: #fff;
+  font-size: 32px;
+  font-weight: bold;
+  cursor: pointer;
+}
+</style>
+
 </body>
 </html>
