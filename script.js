@@ -37,7 +37,6 @@ function renderProducts(filterType) {
     const div = document.createElement("div");
     div.className = "product";
     div.innerHTML = `
-      <img src="${p.image}" alt="${p.name}" />
       <h3>${p.name}</h3>
       <p>Giá: ${p.price}</p>
       <p>${p.description}</p>
