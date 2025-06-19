@@ -1,56 +1,55 @@
 // ====== CẤU HÌNH ======
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxzBIThcL-Dk8tdvyrWAYhqH0Wre9eo71cIAIzm3_2nfRhY4_w9taiAE1EdgdJIeSuo/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbxzBIThcL-Dk8tdvyrWAYhqH0Wre9eo71cIAIzm3_2nfRhY4_w9taiAE1EdgdJIeSuo/exec";
 const IMGUR_CLIENT_ID = "546f4b9e7e2922e";
 
-let editingIndex = null;
+let editingIndex = null; // Dùng để xác định sản phẩm đang sửa
 
 // ====== TẢI DANH SÁCH SẢN PHẨM ======
 async function fetchProducts() {
   try {
-    const res = await fetch(GOOGLE_SCRIPT_URL);
+    const res = await fetch(API_URL);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
     renderProductList(data);
   } catch (err) {
-    alert("Lỗi tải dữ liệu từ Google Sheet.");
-    console.error(err);
+    console.error("🔥 Lỗi khi lấy dữ liệu:", err);
+    alert("❌ Không tải được dữ liệu từ Google Sheet. Vui lòng kiểm tra lại URL và quyền Web App.");
   }
 }
 
 // ====== HIỂN THỊ DANH SÁCH SẢN PHẨM ======
 function renderProductList(products) {
   const container = document.getElementById("productListAdmin");
-  container.innerHTML = "";
-  products.forEach((p, i) => {
-    const div = document.createElement("div");
-    div.className = "product-item";
-    div.innerHTML = `
-      <img src="${p.image}" width="100"><br>
+  container.innerHTML = products.map((p, i) => `
+    <div class="product-item">
+      <img src="${p.image || ''}" width="100" alt="Ảnh sản phẩm"><br>
       <strong>${p.name}</strong><br>
       Giá: ${p.price}<br>
       Mô tả: ${p.description}<br>
       Loại: ${p.type}<br>
-      <button onclick="editProduct(${i})">✏️ Sửa</button>
-      <button onclick="deleteProduct(${i})">🗑️ Xóa</button>
-      <hr>
-    `;
-    container.appendChild(div);
-  });
+      <button onclick="editProduct(${i})" class="secondary">✏️ Sửa</button>
+      <button onclick="deleteProduct(${i})" class="danger">🗑️ Xóa</button>
+    </div><hr>
+  `).join("");
 }
 
-// ====== CHỌN SẢN PHẨM ĐỂ SỬA ======
+// ====== CHỈNH SỬA SẢN PHẨM ======
 async function editProduct(index) {
   try {
-    const res = await fetch(GOOGLE_SCRIPT_URL);
+    const res = await fetch(API_URL);
     const data = await res.json();
     const p = data[index];
     document.getElementById("name").value = p.name;
     document.getElementById("price").value = p.price;
     document.getElementById("description").value = p.description;
     document.getElementById("type").value = p.type;
+    // NOTE: Ảnh cũ vẫn giữ, dùng để submit nếu không chọn ảnh mới
+    document.getElementById("previewImg").src = p.image;
+    document.getElementById("previewImg").style.display = p.image ? 'block' : 'none';
     editingIndex = index;
     window.scrollTo({ top: 0, behavior: 'smooth' });
   } catch (err) {
-    console.error(err);
+    console.error("⚠️ Lỗi editProduct:", err);
   }
 }
 
@@ -58,67 +57,67 @@ async function editProduct(index) {
 async function deleteProduct(index) {
   if (!confirm("Bạn có chắc muốn xóa sản phẩm này?")) return;
   try {
-    const res = await fetch(`${GOOGLE_SCRIPT_URL}?delete=${index}`);
+    const res = await fetch(`${API_URL}?delete=${index}`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const result = await res.json();
     if (result.status === "success") {
-      alert("Đã xóa sản phẩm.");
+      alert("✅ Đã xóa sản phẩm.");
       fetchProducts();
+    } else {
+      alert("❌ Xóa thất bại.");
     }
   } catch (err) {
-    console.error("Lỗi khi xóa sản phẩm:", err);
+    console.error("⚠️ Lỗi deleteProduct:", err);
+    alert("❌ Lỗi khi xóa sản phẩm.");
   }
 }
 
-// ====== XỬ LÝ UPLOAD & GỬI DỮ LIỆU ======
-async function uploadAndSend() {
+// ====== UPLOAD ẢNH & GỬI DỮ LIỆU ======
+async function uploadAndSend(e) {
+  e.preventDefault();
   const name = document.getElementById("name").value.trim();
   const price = document.getElementById("price").value.trim();
   const type = document.getElementById("type").value;
-  const imageFile = document.getElementById("imageUpload").files[0];
+  const imageFile = document.getElementById("imageFile").files[0];
   const description = document.getElementById("description").value.trim();
   const status = document.getElementById("status");
 
-  if (!name || !price || !type || !description || (!imageFile && editingIndex === null)) {
-    alert("Vui lòng điền đầy đủ thông tin và chọn ảnh.");
+  if (!name || !price || !type || !description) {
+    alert("Vui lòng điền đủ thông tin.");
     return;
   }
 
   status.textContent = "⏳ Đang xử lý...";
+  let imageUrl = document.getElementById("previewImg").src || "";
 
-  let imageUrl = "";
-
-  // Nếu thêm mới hoặc sửa nhưng có ảnh mới
   if (imageFile) {
     const formData = new FormData();
     formData.append("image", imageFile);
     try {
       const res = await fetch("https://api.imgur.com/3/image", {
         method: "POST",
-        headers: {
-          Authorization: `Client-ID ${IMGUR_CLIENT_ID}`
-        },
+        headers: { Authorization: `Client-ID ${IMGUR_CLIENT_ID}` },
         body: formData
       });
       const data = await res.json();
-      imageUrl = data.data.link;
+      console.log("Imgur response:", data);
+      if (data.success) {
+        imageUrl = data.data.link;
+      } else {
+        alert("❌ Upload ảnh thất bại.");
+        status.textContent = "";
+        return;
+      }
     } catch (err) {
-      alert("❌ Lỗi tải ảnh lên Imgur.");
+      console.error("⚠️ Lỗi upload ảnh:", err);
+      alert("❌ Không thể upload ảnh.");
+      status.textContent = "";
       return;
     }
   }
 
-  const payload = {
-    name,
-    price,
-    type,
-    description,
-    image: imageUrl
-  };
-
-  let url = GOOGLE_SCRIPT_URL;
-  if (editingIndex !== null) {
-    url += `?edit=${editingIndex}`;
-  }
+  const payload = { name, price, type, description, image: imageUrl };
+  let url = API_URL + (editingIndex !== null ? `?edit=${editingIndex}` : "");
 
   try {
     const res = await fetch(url, {
@@ -127,22 +126,20 @@ async function uploadAndSend() {
     });
     const result = await res.json();
     if (result.status === "success") {
-      status.textContent = editingIndex !== null ? "✅ Đã cập nhật sản phẩm!" : "✅ Đã thêm sản phẩm!";
-      document.getElementById("name").value = "";
-      document.getElementById("price").value = "";
-      document.getElementById("imageUpload").value = "";
-      document.getElementById("description").value = "";
-      document.getElementById("type").value = "";
+      status.textContent = editingIndex !== null ? "✅ Đã cập nhật!" : "✅ Thêm thành công!";
       editingIndex = null;
+      document.getElementById("productForm").reset();
+      document.getElementById("previewImg").style.display = "none";
       fetchProducts();
     } else {
-      status.innerText = "❌ Lỗi khi gửi dữ liệu lên Google Sheet.";
+      alert("❌ Lỗi lưu dữ liệu.");
     }
   } catch (err) {
-    console.error(err);
-    status.innerText = "❌ Lỗi không xác định xảy ra.";
+    console.error("⚠️ Lỗi send data:", err);
+    alert("❌ Lỗi gửi dữ liệu.");
   }
 }
 
-// ====== KHỞI TẠO ======
+// ====== EVENT LISTENERS ======
 document.addEventListener("DOMContentLoaded", fetchProducts);
+document.getElementById("productForm").addEventListener("submit", uploadAndSend);
