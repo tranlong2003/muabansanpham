@@ -3,82 +3,135 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin - Quản lý sản phẩm</title>
+  <title>Quản lý sản phẩm - Admin</title>
   <link rel="stylesheet" href="style.css">
   <style>
-    body { font-family: Arial, sans-serif; padding: 30px; background: #f4f6f9; }
-    h1, h3 { text-align: center; color: #333; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f0f2f5;
+      margin: 0;
+      padding: 30px 15px;
+    }
+
+    h1, h3 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 30px;
+    }
 
     form {
       background: #fff;
-      padding: 25px;
+      padding: 25px 30px;
       border-radius: 12px;
       max-width: 700px;
       margin: auto;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     }
 
     input, select, textarea {
       width: 100%;
+      padding: 12px 14px;
       margin-bottom: 15px;
-      padding: 12px;
       font-size: 15px;
       border: 1px solid #ccc;
       border-radius: 8px;
-      box-sizing: border-box;
+      transition: border-color 0.2s;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: #28a745;
     }
 
     button {
-      background: #28a745;
+      padding: 12px 20px;
+      font-size: 15px;
+      font-weight: bold;
       color: white;
-      padding: 10px 20px;
+      background-color: #28a745;
       border: none;
       border-radius: 6px;
       cursor: pointer;
-      font-weight: bold;
-    }
-    button:hover { background: #218838; }
-
-    .danger { background: #dc3545; }
-    .danger:hover { background: #c82333; }
-
-    .secondary { background: #007bff; }
-    .secondary:hover { background: #0056b3; }
-
-    .product-list {
-      margin-top: 40px;
-      max-width: 900px;
-      margin-left: auto;
-      margin-right: auto;
+      transition: background-color 0.2s;
     }
 
-    .product-item {
-      background: white;
-      border: 1px solid #ddd;
-      padding: 20px;
-      border-radius: 10px;
-      margin-bottom: 15px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    button:hover {
+      background-color: #218838;
     }
 
-    .product-item img {
-      max-width: 80px;
-      border-radius: 6px;
-      margin-top: 5px;
+    .danger {
+      background-color: #dc3545;
+    }
+
+    .danger:hover {
+      background-color: #c82333;
+    }
+
+    .secondary {
+      background-color: #007bff;
+    }
+
+    .secondary:hover {
+      background-color: #0056b3;
     }
 
     #previewImg {
-      max-width: 150px;
-      margin-bottom: 15px;
-      display: block;
+      max-width: 120px;
       border-radius: 8px;
+      display: block;
+      margin-bottom: 15px;
+    }
+
+    .product-list {
+      max-width: 900px;
+      margin: 40px auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .product-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      gap: 20px;
+    }
+
+    .product-info {
+      flex: 1;
+    }
+
+    .product-info img {
+      max-width: 90px;
+      border-radius: 6px;
+      margin-bottom: 8px;
+    }
+
+    .product-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    @media (max-width: 600px) {
+      .product-item {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .product-actions {
+        flex-direction: row;
+        justify-content: flex-end;
+      }
     }
   </style>
 </head>
 <body>
+
   <h1>🔒 Khu vực quản trị sản phẩm</h1>
 
   <form id="productForm">
@@ -87,20 +140,23 @@
     <input type="text" id="price" placeholder="Giá bán" required>
     <input type="file" id="imageFile" accept="image/*" required>
     <img id="previewImg" src="" style="display:none" />
-    <textarea id="description" placeholder="Mô tả sản phẩm" required></textarea>
+    <textarea id="description" placeholder="Mô tả sản phẩm" rows="4" required></textarea>
     <select id="type" required>
       <option value="">-- Chọn loại sản phẩm --</option>
       <option value="iphone">iPhone</option>
       <option value="android">Android</option>
       <option value="acc">Acc Game</option>
     </select>
-    
     <button type="submit">💾 Lưu sản phẩm</button>
   </form>
 
   <h3>📋 Danh sách sản phẩm</h3>
-  <div class="product-list" id="productList"></div>
+
+  <div class="product-list" id="productList">
+    <!-- Các sản phẩm sẽ được render tại đây -->
+  </div>
 
   <script src="admin.js"></script>
+
 </body>
 </html>
