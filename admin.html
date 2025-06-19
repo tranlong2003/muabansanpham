@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin - Quản lý sản phẩm</title>
-  <link rel="stylesheet" href="style.css">
   <style>
     body { font-family: Arial, sans-serif; padding: 20px; background: #f9f9f9; }
     h1 { text-align: center; color: #333; }
@@ -18,7 +17,7 @@
     .secondary:hover { background: #0056b3; }
     .product-list { margin-top: 30px; max-width: 800px; margin: 30px auto; }
     .product-item { background: white; border: 1px solid #ddd; padding: 15px; border-radius: 10px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
-    #previewImg { max-width: 100px; margin-bottom: 10px; display: block; }
+    .preview-multiple img { max-width: 80px; margin: 5px; border-radius: 6px; }
   </style>
 </head>
 <body>
@@ -28,8 +27,8 @@
     <input type="hidden" id="editIndex">
     <input type="text" id="name" placeholder="Tên sản phẩm" required>
     <input type="text" id="price" placeholder="Giá bán" required>
-    <input type="file" id="imageFile" accept="image/*" required>
-    <img id="previewImg" src="" style="display:none" />
+    <input type="file" id="imageFile" accept="image/*" multiple required>
+    <div id="previewImgs" class="preview-multiple"></div>
     <textarea id="description" placeholder="Mô tả sản phẩm" required></textarea>
     <select id="type" required>
       <option value="">-- Chọn loại sản phẩm --</option>
@@ -65,12 +64,15 @@
       products.forEach((p, index) => {
         const div = document.createElement("div");
         div.className = "product-item";
+
+        const imageHTML = p.images ? p.images.map(img => `<img src="${img}" />`).join("") : "";
+
         div.innerHTML = `
           <div>
             <strong>${p.name}</strong><br>
             Giá: ${p.price} | Loại: ${p.type}<br>
             <em>${p.description || ""}</em><br>
-            <img src="${p.image}" alt="${p.name}" style="max-width: 80px; margin-top:5px">
+            <div class="preview-multiple">${imageHTML}</div>
           </div>
           <div>
             <button class="secondary" onclick='editProduct(${index})'>Sửa</button>
@@ -82,15 +84,19 @@
     }
 
     document.getElementById("imageFile").addEventListener("change", function () {
-      const file = this.files[0];
-      if (file) {
+      const files = Array.from(this.files);
+      const preview = document.getElementById("previewImgs");
+      preview.innerHTML = "";
+
+      files.forEach(file => {
         const reader = new FileReader();
         reader.onload = function (e) {
-          document.getElementById("previewImg").src = e.target.result;
-          document.getElementById("previewImg").style.display = "block";
+          const img = document.createElement("img");
+          img.src = e.target.result;
+          preview.appendChild(img);
         };
         reader.readAsDataURL(file);
-      }
+      });
     });
 
     document.getElementById("productForm").addEventListener("submit", async (e) => {
@@ -100,22 +106,35 @@
       const price = document.getElementById("price").value.trim();
       const description = document.getElementById("description").value.trim();
       const type = document.getElementById("type").value;
-      const imageFile = document.getElementById("imageFile").files[0];
+      const files = Array.from(document.getElementById("imageFile").files);
 
-      if (!imageFile && !index) return alert("Vui lòng chọn ảnh sản phẩm.");
+      if (files.length === 0 && !index) return alert("Vui lòng chọn ảnh sản phẩm.");
 
-      let imageUrl = "";
-      if (imageFile) {
-        const reader = new FileReader();
-        reader.onloadend = async function () {
-          imageUrl = reader.result; // Dùng base64
-          await saveProduct(index, { name, price, description, type, image: imageUrl });
-        };
-        reader.readAsDataURL(imageFile);
-      } else {
-        imageUrl = currentProducts[index].image;
-        await saveProduct(index, { name, price, description, type, image: imageUrl });
+      const images = [];
+
+      const loadImages = files.map(file => {
+        return new Promise(resolve => {
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            resolve(e.target.result);
+          };
+          reader.readAsDataURL(file);
+        });
+      });
+
+      const imageBase64s = await Promise.all(loadImages);
+
+      if (imageBase64s.length === 0 && index) {
+        imageBase64s.push(...(currentProducts[index].images || []));
       }
+
+      await saveProduct(index, {
+        name,
+        price,
+        description,
+        type,
+        images: imageBase64s
+      });
     });
 
     async function saveProduct(index, product) {
@@ -127,7 +146,7 @@
         });
         alert(index ? "✏️ Đã cập nhật sản phẩm!" : "✅ Đã thêm sản phẩm!");
         document.getElementById("productForm").reset();
-        document.getElementById("previewImg").style.display = "none";
+        document.getElementById("previewImgs").innerHTML = "";
         fetchProducts();
       } catch (err) {
         alert("❌ Lỗi khi lưu sản phẩm!");
@@ -142,8 +161,15 @@
       document.getElementById("price").value = p.price;
       document.getElementById("description").value = p.description;
       document.getElementById("type").value = p.type;
-      document.getElementById("previewImg").src = p.image;
-      document.getElementById("previewImg").style.display = "block";
+
+      const preview = document.getElementById("previewImgs");
+      preview.innerHTML = "";
+      (p.images || []).forEach(img => {
+        const image = document.createElement("img");
+        image.src = img;
+        preview.appendChild(image);
+      });
+
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
@@ -163,8 +189,8 @@
 
     window.addEventListener("DOMContentLoaded", fetchProducts);
   </script>
-  <h3 style="bottom: 30px;">📋 Danh sách sản phẩm</h3>
-<div id="productListAdmin"></div>
 
+  <h3 style="bottom: 30px;">📋 Danh sách sản phẩm</h3>
+  <div id="productListAdmin"></div>
 </body>
 </html>
