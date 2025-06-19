@@ -93,17 +93,6 @@ function renderAverageRating() {
   const average = (total / ratings.length).toFixed(1);
   document.getElementById("avgRating").textContent = `🌟 Trung bình đánh giá: ${average} (${ratings.length} lượt)`;
 }
-
-// Gọi khi tải trang
-renderAverageRating();
-function resetRatings() {
-  if (confirm("Bạn có chắc muốn xóa toàn bộ đánh giá không?")) {
-    localStorage.removeItem("ratings");
-    renderAverageRating();
-    alert("✅ Đã reset toàn bộ đánh giá.");
-  }
-}
-
 // ====== TẢI SẢN PHẨM TỪ GOOGLE SHEET ======
 async function fetchProductsFromSheet() {
   try {
