@@ -101,7 +101,7 @@ function resetRatings() {
 // ====== TẢI TỪ GOOGLE SHEET ======
 async function fetchProductsFromSheet() {
   try {
-    const res = await fetch("https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec");
+    const res = await fetch("https://script.google.com/macros/s/AKfycbwERNk5suUjA5KpJnrGieSUoTE5T6DG9wl4swHqHZ6OAakmqEiLn29NJKSZZuIkN3Mr/exec");
     const data = await res.json();
     products = data;
     renderProducts("iphone");
