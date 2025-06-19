@@ -1,35 +1,104 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8" />
-  <title>Thêm sản phẩm mới</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - Quản lý sản phẩm</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body { font-family: Arial, sans-serif; padding: 30px; background: #f4f6f9; }
+    h1, h3 { text-align: center; color: #333; }
+
+    form {
+      background: #fff;
+      padding: 25px;
+      border-radius: 12px;
+      max-width: 700px;
+      margin: auto;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    input, select, textarea {
+      width: 100%;
+      margin-bottom: 15px;
+      padding: 12px;
+      font-size: 15px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-sizing: border-box;
+    }
+
+    button {
+      background: #28a745;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    button:hover { background: #218838; }
+
+    .danger { background: #dc3545; }
+    .danger:hover { background: #c82333; }
+
+    .secondary { background: #007bff; }
+    .secondary:hover { background: #0056b3; }
+
+    .product-list {
+      margin-top: 40px;
+      max-width: 900px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .product-item {
+      background: white;
+      border: 1px solid #ddd;
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+
+    .product-item img {
+      max-width: 80px;
+      border-radius: 6px;
+      margin-top: 5px;
+    }
+
+    #previewImg {
+      max-width: 150px;
+      margin-bottom: 15px;
+      display: block;
+      border-radius: 8px;
+    }
+  </style>
 </head>
 <body>
-  <div class="admin-container">
-    <h1>🛠️ Thêm sản phẩm mới</h1>
-    <input type="text" id="name" placeholder="Tên sản phẩm" /><br>
-    <input type="text" id="price" placeholder="Giá sản phẩm" /><br>
-    <textarea id="description" placeholder="Mô tả sản phẩm" rows="3"></textarea><br>
+  <h1>🔒 Khu vực quản trị sản phẩm</h1>
 
-    <select id="type">
+  <form id="productForm">
+    <input type="hidden" id="editIndex">
+    <input type="text" id="name" placeholder="Tên sản phẩm" required>
+    <input type="text" id="price" placeholder="Giá bán" required>
+    <input type="file" id="imageFile" accept="image/*" required>
+    <img id="previewImg" src="" style="display:none" />
+    <textarea id="description" placeholder="Mô tả sản phẩm" required></textarea>
+    <select id="type" required>
+      <option value="">-- Chọn loại sản phẩm --</option>
       <option value="iphone">iPhone</option>
       <option value="android">Android</option>
       <option value="acc">Acc Game</option>
-    </select><br>
-    <input type="file" id="imageUpload" accept="image/*" /><br>
-    <button onclick="uploadAndSend()">📤 Tải lên & Gửi</button>
-    <p id="status"></p>
-     <p><a href="index.html" class="" style="color: blue;">⬅️ Quay lại trang chính</a></p>
-  </div>
-  <button onclick="logoutAdmin()">🚪 Đăng xuất</button>
+    </select>
+    <button type="submit">💾 Lưu sản phẩm</button>
+  </form>
 
-<script>
-  function logoutAdmin() {
-    localStorage.removeItem("isAdmin");
-    window.location.href = "admin-login.html";
-  }
-</script>
+  <h3>📋 Danh sách sản phẩm</h3>
+  <div class="product-list" id="productList"></div>
 
   <script src="admin.js"></script>
 </body>
