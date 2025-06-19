@@ -3,26 +3,37 @@ let products = [
   {
     name: "iPhone 11 Pro Max 64GB",
     price: "7.500.000đ",
-    image: "https://via.placeholder.com/260x160?text=iPhone+11+Pro",
+    description: "Máy đẹp 99%, pin khỏe",
     type: "iphone",
+    image: "https://via.placeholder.com/260x160?text=iPhone+11+Pro"
   },
   {
     name: "Samsung Galaxy S21",
     price: "6.800.000đ",
-    image: "https://via.placeholder.com/260x160?text=Galaxy+S21",
+    description: "Fullbox chính hãng, BH 6 tháng",
     type: "android",
+    image: "https://via.placeholder.com/260x160?text=Galaxy+S21"
   },
   {
     name: "Acc Free Fire VIP",
     price: "500.000đ",
-    image: "https://via.placeholder.com/260x160?text=Acc+Free+Fire",
+    description: "Acc nhiều skin, súng vip",
     type: "acc",
+    image: "https://via.placeholder.com/260x160?text=Acc+Free+Fire"
   }
 ];
+
+// ====== HIỂN THỊ SẢN PHẨM ======
+function renderProducts(filterType) {
   const grid = document.getElementById("productGrid");
   grid.innerHTML = "";
 
   const filtered = products.filter(p => p.type === filterType);
+
+  if (filtered.length === 0) {
+    grid.innerHTML = `<p>⚠️ Không có sản phẩm nào thuộc loại "${filterType}"</p>`;
+    return;
+  }
 
   filtered.forEach(p => {
     const div = document.createElement("div");
@@ -98,15 +109,16 @@ function resetRatings() {
   }
 }
 
-// ====== TẢI TỪ GOOGLE SHEET ======
+// ====== TẢI TỪ GOOGLE SHEET (NẾU CÓ) ======
 async function fetchProductsFromSheet() {
   try {
     const res = await fetch("https://script.google.com/macros/s/AKfycbwERNk5suUjA5KpJnrGieSUoTE5T6DG9wl4swHqHZ6OAakmqEiLn29NJKSZZuIkN3Mr/exec");
     const data = await res.json();
-    products = data;
-    renderProducts("iphone");
+    if (Array.isArray(data) && data.length > 0) {
+      products = data;
+    }
   } catch (error) {
-    console.error("❌ Lỗi tải sản phẩm từ Google Sheet:", error);
+    console.warn("⚠️ Không thể tải từ Google Sheet. Dùng dữ liệu mẫu.");
   }
 }
 
