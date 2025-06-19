@@ -1,7 +1,24 @@
-let products = [];
-
-// ====== HIỂN THỊ SẢN PHẨM ======
-function renderProducts(filterType) {
+// ====== DANH SÁCH SẢN PHẨM MẪU ======
+let products = [
+  {
+    name: "iPhone 11 Pro Max 64GB",
+    price: "7.500.000đ",
+    image: "https://via.placeholder.com/260x160?text=iPhone+11+Pro",
+    type: "iphone",
+  },
+  {
+    name: "Samsung Galaxy S21",
+    price: "6.800.000đ",
+    image: "https://via.placeholder.com/260x160?text=Galaxy+S21",
+    type: "android",
+  },
+  {
+    name: "Acc Free Fire VIP",
+    price: "500.000đ",
+    image: "https://via.placeholder.com/260x160?text=Acc+Free+Fire",
+    type: "acc",
+  }
+];
   const grid = document.getElementById("productGrid");
   grid.innerHTML = "";
 
@@ -48,7 +65,7 @@ document.getElementById("ratingForm").addEventListener("submit", function (e) {
   const comment = document.getElementById("comment").value.trim();
 
   if (!rating) {
-    alert("Vui lòng chọn số sao.");
+    alert("Vui lòng chọn số sao."); 
     return;
   }
 
