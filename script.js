@@ -5,21 +5,21 @@ let products = [
     price: "7.500.000đ",
     description: "Máy đẹp 99%, pin khỏe",
     type: "iphone",
-    image: "https://via.placeholder.com/260x160?text=iPhone+11+Pro"
+    image: ["https://via.placeholder.com/260x160?text=iPhone+11+Pro"]
   },
   {
     name: "Samsung Galaxy S21",
     price: "6.800.000đ",
     description: "Fullbox chính hãng, BH 6 tháng",
     type: "android",
-    image: "https://via.placeholder.com/260x160?text=Galaxy+S21"
+    image: ["https://via.placeholder.com/260x160?text=Galaxy+S21"]
   },
   {
     name: "Acc Free Fire VIP",
     price: "500.000đ",
     description: "Acc nhiều skin, súng vip",
     type: "acc",
-    image: "https://via.placeholder.com/260x160?text=Acc+Free+Fire"
+    image: []
   }
 ];
 
@@ -31,19 +31,27 @@ function renderProducts(filterType) {
   const filtered = products.filter(p => p.type === filterType);
 
   if (filtered.length === 0) {
-    grid.innerHTML = `<p>⚠️ Không có sản phẩm nào thuộc loại "${filterType}"</p>`;
+    grid.innerHTML = `<p style="color: orange;">⚠️ Không có sản phẩm nào thuộc loại "${filterType}"</p>`;
     return;
   }
 
-  filtered.forEach(p => {
+  filtered.forEach((p, index) => {
     const div = document.createElement("div");
     div.className = "product";
+
+    let imageHtml = "";
+    if (p.image && p.image.length > 0) {
+      imageHtml = `<img src="${p.image[0]}" alt="${p.name}" width="200" style="border-radius:8px;margin-bottom:10px;">
+      <button onclick="showProductImage(${index})">📷 Xem ảnh</button>`;
+    } else {
+      imageHtml = `<div style="width:200px;height:120px;background:#eee;border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:10px;">(Chưa có ảnh)</div>`;
+    }
+
     div.innerHTML = `
       <h3>${p.name}</h3>
-      <img src="${p.image}" alt="${p.name}" width="200" style="border-radius:8px;margin-bottom:10px;">
+      ${imageHtml}
       <p><strong>Giá:</strong> ${p.price}</p>
       <p><strong>Mô tả:</strong> ${p.description || "Không có"}</p>
-      <button onclick="showProductImage('${p.image}')">📷 Xem ảnh</button>
       <button onclick="window.open('https://zalo.me/0337457055', '_blank')">Inbox Zalo</button>
     `;
     grid.appendChild(div);
@@ -51,10 +59,17 @@ function renderProducts(filterType) {
 }
 
 // ====== XEM ẢNH SẢN PHẨM ======
-function showProductImage(imageUrl) {
+function showProductImage(index) {
   const modal = document.getElementById("imageListModal");
   const content = document.getElementById("imageListContent");
-  content.innerHTML = `<img src="${imageUrl}" style="max-width:100%;border-radius:12px;">`;
+  const images = products[index].image || [];
+
+  if (images.length === 0) {
+    content.innerHTML = "<p>Không có ảnh nào.</p>";
+  } else {
+    content.innerHTML = images.map(img => `<img src="${img}" style="max-width:100%;border-radius:12px;margin-bottom:10px;">`).join("");
+  }
+
   modal.style.display = "flex";
 }
 
@@ -109,16 +124,21 @@ function resetRatings() {
   }
 }
 
-// ====== TẢI TỪ GOOGLE SHEET (NẾU CÓ) ======
+// ====== TẢI TỪ GOOGLE SHEET ======
 async function fetchProductsFromSheet() {
   try {
     const res = await fetch("https://script.google.com/macros/s/AKfycbwERNk5suUjA5KpJnrGieSUoTE5T6DG9wl4swHqHZ6OAakmqEiLn29NJKSZZuIkN3Mr/exec");
     const data = await res.json();
-    if (Array.isArray(data) && data.length > 0) {
-      products = data;
-    }
+
+    // Chuyển đổi image thành mảng nếu chưa đúng định dạng
+    products = data.map(p => ({
+      ...p,
+      image: Array.isArray(p.image) ? p.image : (p.image ? p.image.split("|") : [])
+    }));
+
+    renderProducts("iphone");
   } catch (error) {
-    console.warn("⚠️ Không thể tải từ Google Sheet. Dùng dữ liệu mẫu.");
+    console.error("❌ Lỗi tải sản phẩm từ Google Sheet:", error);
   }
 }
 
