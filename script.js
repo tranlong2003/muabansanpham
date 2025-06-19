@@ -4,7 +4,6 @@ let products = [
     name: "iPhone 6s 32GB",
     price: "850.000đ",
     image: "https://via.placeholder.com/260x160?text=iPhone+11+Pro",
-    describe: "máy full chức năng bao ngon"
     type: "iphone",
   },
   {
