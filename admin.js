@@ -1,5 +1,5 @@
 // ====== CẤU HÌNH ======
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbweL4rf2TY0yco60V4xsmI4NExypm8dMCE83ilbJMUw-VruBkJRK30d3TU9vKr8y6wB/exec";
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxzBIThcL-Dk8tdvyrWAYhqH0Wre9eo71cIAIzm3_2nfRhY4_w9taiAE1EdgdJIeSuo/exec";
 const IMGUR_CLIENT_ID = "546f4b9e7e2922e";
 
 let editingIndex = null;
