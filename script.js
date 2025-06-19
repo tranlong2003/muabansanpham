@@ -1,7 +1,7 @@
 // ====== DANH SÁCH SẢN PHẨM MẪU ======
 let products = [
   {
-    name: "iPhone 6s 32GB",
+   name: "iPhone 6s 32GB",
     price: "1.000.000đ",
     type: "iphone",
     image: "https://cdn-img.upanhlaylink.com/view/image_2025061838fc79d2e5ad03d34e0ec0a0cee103fd.jpg",
@@ -37,18 +37,30 @@ function renderProducts(filterType) {
     const div = document.createElement("div");
     div.className = "product";
     div.innerHTML = `
-      <div class="product-header">
-  <h3>${p.name}</h3>
-<button onclick="openImageList(['${p.image}'])">📸Xem ảnh</button>
-</div>
-      <p>Giá: ${p.price}</p>
-      <p>${p.description}</p>
-      <button onclick="window.open('https://zalo.me/0337457055', '_blank')">Inbox Zalo</button>
+      <h3>${p.name}</h3>
+      <div class="product-box">
+        <button onclick="showProductImage('${p.image}')">📷 Xem ảnh</button>
+        <p>Giá: ${p.price}</p>
+        <p>${p.description || ""}</p>
+        <button onclick="window.open('https://zalo.me/0337457055', '_blank')">Inbox Zalo</button>
+      </div>
     `;
     grid.appendChild(div);
   });
 }
 
+// Hiển thị modal ảnh
+function showProductImage(imageUrl) {
+  const modal = document.getElementById("imageListModal");
+  const content = document.getElementById("imageListContent");
+
+  content.innerHTML = `<img src="${imageUrl}" alt="Ảnh sản phẩm" />`;
+  modal.style.display = "flex";
+}
+
+function closeImageListModal() {
+  document.getElementById("imageListModal").style.display = "none";
+}
 
 // Hàm lọc sản phẩm khi bấm nút
 function filter(type) {
@@ -93,39 +105,46 @@ function renderAverageRating() {
   const average = (total / ratings.length).toFixed(1);
   document.getElementById("avgRating").textContent = `🌟 Trung bình đánh giá: ${average} (${ratings.length} lượt)`;
 }
+
+function resetRatings() {
+  if (confirm("Bạn có chắc muốn xóa toàn bộ đánh giá không?")) {
+    localStorage.removeItem("ratings");
+    renderAverageRating();
+    alert("✅ Đã reset toàn bộ đánh giá.");
+  }
+}
+
 // ====== TẢI SẢN PHẨM TỪ GOOGLE SHEET ======
 async function fetchProductsFromSheet() {
   try {
     const res = await fetch("https://script.google.com/macros/s/AKfycbweL4rf2TY0yco60V4xsmI4NExypm8dMCE83ilbJMUw-VruBkJRK30d3TU9vKr8y6wB/exec"); // thay bằng link của bạn
     const data = await res.json();
     products = data;
-    renderProducts("iphone"); // Hoặc render tất cả tùy bạn
+    renderProducts("iphone");
   } catch (error) {
     console.error("❌ Lỗi tải sản phẩm từ Sheet:", error);
   }
 }
 
-function openImageList(images) {
-  const modal = document.getElementById("imageListModal");
-  const content = document.getElementById("imageListContent");
-  content.innerHTML = "";
-
-  images.forEach(url => {
-    const img = document.createElement("img");
-    img.src = url;
-    content.appendChild(img);
-  });
-
-  modal.style.display = "flex";
-}
-
-function closeImageListModal() {
-  document.getElementById("imageListModal").style.display = "none";
-}
-
-
-// Khi tải trang
+// ====== TẢI TRANG ======
 window.addEventListener("DOMContentLoaded", async () => {
   await fetchProductsFromSheet();
-  renderProducts("iphone");  // mặc định hiển thị iphone
+  renderAverageRating(); // Tính sao ngay khi vào trang
+  renderProducts("iphone");
 });
+
+function showGallery() {
+  document.getElementById("galleryModal").style.display = "block";
+}
+
+function closeGallery() {
+  document.getElementById("galleryModal").style.display = "none";
+}
+
+// Đóng modal khi click ra ngoài
+window.onclick = function(event) {
+  const modal = document.getElementById("galleryModal");
+  if (event.target == modal) {
+    modal.style.display = "none";
+  }
+};
