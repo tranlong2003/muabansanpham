@@ -18,6 +18,7 @@
     .product-list { margin-top: 30px; max-width: 800px; margin: 30px auto; }
     .product-item { background: white; border: 1px solid #ddd; padding: 15px; border-radius: 10px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
     .preview-multiple img { max-width: 80px; margin: 5px; border-radius: 6px; }
+    .preview-multiple { display: flex; flex-wrap: wrap; gap: 10px; }
   </style>
 </head>
 <body>
@@ -27,7 +28,7 @@
     <input type="hidden" id="editIndex">
     <input type="text" id="name" placeholder="Tên sản phẩm" required>
     <input type="text" id="price" placeholder="Giá bán" required>
-    <input type="file" id="imageFile" accept="image/*" multiple required>
+    <input type="file" id="imageFile" accept="image/*" multiple>
     <div id="previewImgs" class="preview-multiple"></div>
     <textarea id="description" placeholder="Mô tả sản phẩm" required></textarea>
     <select id="type" required>
@@ -65,7 +66,7 @@
         const div = document.createElement("div");
         div.className = "product-item";
 
-        const imageHTML = p.images ? p.images.map(img => `<img src="${img}" />`).join("") : "";
+        const imageHTML = (p.images || []).map(img => `<img src="${img}" />`).join("");
 
         div.innerHTML = `
           <div>
@@ -91,9 +92,30 @@
       files.forEach(file => {
         const reader = new FileReader();
         reader.onload = function (e) {
+          const container = document.createElement("div");
+          container.style.position = "relative";
+
           const img = document.createElement("img");
           img.src = e.target.result;
-          preview.appendChild(img);
+
+          const removeBtn = document.createElement("span");
+          removeBtn.textContent = "❌";
+          Object.assign(removeBtn.style, {
+            position: "absolute",
+            top: "0px",
+            right: "0px",
+            background: "red",
+            color: "white",
+            padding: "2px 6px",
+            fontSize: "12px",
+            borderRadius: "0 6px",
+            cursor: "pointer"
+          });
+          removeBtn.onclick = () => container.remove();
+
+          container.appendChild(img);
+          container.appendChild(removeBtn);
+          preview.appendChild(container);
         };
         reader.readAsDataURL(file);
       });
@@ -106,34 +128,19 @@
       const price = document.getElementById("price").value.trim();
       const description = document.getElementById("description").value.trim();
       const type = document.getElementById("type").value;
-      const files = Array.from(document.getElementById("imageFile").files);
 
-      if (files.length === 0 && !index) return alert("Vui lòng chọn ảnh sản phẩm.");
+      // Lấy toàn bộ ảnh trong preview (dù là upload mới hay ảnh cũ đang sửa)
+      const imgTags = document.querySelectorAll("#previewImgs img");
+      const images = Array.from(imgTags).map(img => img.src);
 
-      const images = [];
-
-      const loadImages = files.map(file => {
-        return new Promise(resolve => {
-          const reader = new FileReader();
-          reader.onload = function (e) {
-            resolve(e.target.result);
-          };
-          reader.readAsDataURL(file);
-        });
-      });
-
-      const imageBase64s = await Promise.all(loadImages);
-
-      if (imageBase64s.length === 0 && index) {
-        imageBase64s.push(...(currentProducts[index].images || []));
-      }
+      if (images.length === 0 && !index) return alert("Vui lòng chọn ảnh sản phẩm.");
 
       await saveProduct(index, {
         name,
         price,
         description,
         type,
-        images: imageBase64s
+        images
       });
     });
 
@@ -164,10 +171,32 @@
 
       const preview = document.getElementById("previewImgs");
       preview.innerHTML = "";
-      (p.images || []).forEach(img => {
-        const image = document.createElement("img");
-        image.src = img;
-        preview.appendChild(image);
+
+      (p.images || []).forEach(imgUrl => {
+        const container = document.createElement("div");
+        container.style.position = "relative";
+
+        const img = document.createElement("img");
+        img.src = imgUrl;
+
+        const removeBtn = document.createElement("span");
+        removeBtn.textContent = "❌";
+        Object.assign(removeBtn.style, {
+          position: "absolute",
+          top: "0px",
+          right: "0px",
+          background: "red",
+          color: "white",
+          padding: "2px 6px",
+          fontSize: "12px",
+          borderRadius: "0 6px",
+          cursor: "pointer"
+        });
+        removeBtn.onclick = () => container.remove();
+
+        container.appendChild(img);
+        container.appendChild(removeBtn);
+        preview.appendChild(container);
       });
 
       window.scrollTo({ top: 0, behavior: "smooth" });
@@ -190,7 +219,7 @@
     window.addEventListener("DOMContentLoaded", fetchProducts);
   </script>
 
-  <h3 style="bottom: 30px;">📋 Danh sách sản phẩm</h3>
+  <h3 style="margin-top: 40px;">📋 Danh sách sản phẩm</h3>
   <div id="productListAdmin"></div>
 </body>
 </html>
