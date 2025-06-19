@@ -1,5 +1,5 @@
 // ====== CẤU HÌNH ======
-const API_URL = "https://script.google.com/macros/s/AKfycbxzBIThcL-Dk8tdvyrWAYhqH0Wre9eo71cIAIzm3_2nfRhY4_w9taiAE1EdgdJIeSuo/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbwERNk5suUjA5KpJnrGieSUoTE5T6DG9wl4swHqHZ6OAakmqEiLn29NJKSZZuIkN3Mr/exec";
 const IMGUR_CLIENT_ID = "546f4b9e7e2922e";
 
 let editingIndex = null; // Dùng để xác định sản phẩm đang sửa
