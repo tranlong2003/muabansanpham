@@ -1,9 +1,10 @@
 // ====== DANH SÁCH SẢN PHẨM MẪU ======
 let products = [
   {
-    name: "iPhone 6s 32GB",
-    price: "850.000đ",
+    name: "iPhone 11 Pro Max 64GB",
+    price: "7.500.000đ",
     image: "https://via.placeholder.com/260x160?text=iPhone+11+Pro",
+      describe: "máy full chức năng bao ngon"
     type: "iphone",
   },
   {
@@ -22,9 +23,11 @@ let products = [
 
 const grid = document.getElementById("productGrid");
 
-// ====== HIỂN THỊ DANH SÁCH SẢN PHẨM ======
+// Hàm hiển thị sản phẩm
 function renderProducts(filterType) {
+  const grid = document.getElementById("productGrid");
   grid.innerHTML = "";
+
   const filtered = products.filter(p => p.type === filterType);
 
   filtered.forEach(p => {
@@ -43,10 +46,11 @@ function renderProducts(filterType) {
   });
 }
 
-// ====== HIỂN THỊ ẢNH TRONG MODAL ======
+// Hiển thị modal ảnh
 function showProductImage(imageUrl) {
   const modal = document.getElementById("imageListModal");
   const content = document.getElementById("imageListContent");
+
   content.innerHTML = `<img src="${imageUrl}" alt="Ảnh sản phẩm" />`;
   modal.style.display = "flex";
 }
@@ -55,7 +59,7 @@ function closeImageListModal() {
   document.getElementById("imageListModal").style.display = "none";
 }
 
-// ====== LỌC THEO LOẠI ======
+// Hàm lọc sản phẩm khi bấm nút
 function filter(type) {
   document.querySelectorAll(".menu button").forEach(btn => btn.classList.remove("active"));
   event.target.classList.add("active");
@@ -65,8 +69,10 @@ function filter(type) {
 // ====== ĐÁNH GIÁ SAO ======
 let selectedRating = 0;
 
+// Gửi đánh giá
 document.getElementById("ratingForm").addEventListener("submit", function (e) {
   e.preventDefault();
+
   const rating = document.querySelector('input[name="rating"]:checked');
   const comment = document.getElementById("comment").value.trim();
 
@@ -80,10 +86,12 @@ document.getElementById("ratingForm").addEventListener("submit", function (e) {
   localStorage.setItem("ratings", JSON.stringify(ratings));
 
   alert("✅ Đánh giá đã được ghi nhận. Cảm ơn bạn!");
+
   this.reset();
   renderAverageRating();
 });
 
+// Tính trung bình đánh giá
 function renderAverageRating() {
   const ratings = JSON.parse(localStorage.getItem("ratings") || "[]");
   if (ratings.length === 0) {
@@ -103,10 +111,10 @@ function resetRatings() {
   }
 }
 
-// ====== LẤY SẢN PHẨM TỪ GOOGLE SHEET ======
+// ====== TẢI SẢN PHẨM TỪ GOOGLE SHEET ======
 async function fetchProductsFromSheet() {
   try {
-    const res = await fetch("https://script.google.com/macros/s/AKfycbwERNk5suUjA5KpJnrGieSUoTE5T6DG9wl4swHqHZ6OAakmqEiLn29NJKSZZuIkN3Mr/exec");
+    const res = await fetch("https://script.google.com/macros/s/AKfycbweL4rf2TY0yco60V4xsmI4NExypm8dMCE83ilbJMUw-VruBkJRK30d3TU9vKr8y6wB/exec"); // thay bằng link của bạn
     const data = await res.json();
     products = data;
     renderProducts("iphone");
@@ -115,10 +123,11 @@ async function fetchProductsFromSheet() {
   }
 }
 
-// ====== KHỞI ĐỘNG TRANG ======
+// ====== TẢI TRANG ======
 window.addEventListener("DOMContentLoaded", async () => {
   await fetchProductsFromSheet();
-  renderAverageRating();
+  renderAverageRating(); // Tính sao ngay khi vào trang
+  renderProducts("iphone");
 });
 
 function showGallery() {
@@ -129,6 +138,7 @@ function closeGallery() {
   document.getElementById("galleryModal").style.display = "none";
 }
 
+// Đóng modal khi click ra ngoài
 window.onclick = function(event) {
   const modal = document.getElementById("galleryModal");
   if (event.target == modal) {
