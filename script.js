@@ -117,7 +117,7 @@ function resetRatings() {
 // ====== TẢI SẢN PHẨM TỪ GOOGLE SHEET ======
 async function fetchProductsFromSheet() {
   try {
-    const res = await fetch("https://script.google.com/macros/s/AKfycbweL4rf2TY0yco60V4xsmI4NExypm8dMCE83ilbJMUw-VruBkJRK30d3TU9vKr8y6wB/exec"); // thay bằng link của bạn
+    const res = await fetch("https://script.google.com/macros/s/AKfycbxzBIThcL-Dk8tdvyrWAYhqH0Wre9eo71cIAIzm3_2nfRhY4_w9taiAE1EdgdJIeSuo/exec"); // thay bằng link của bạn
     const data = await res.json();
     products = data;
     renderProducts("iphone");
