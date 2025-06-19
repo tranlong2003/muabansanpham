@@ -1,27 +1,4 @@
-// ====== DANH SÁCH SẢN PHẨM MẪU ======
-let products = [
-  {
-    name: "iPhone 11 Pro Max 64GB",
-    price: "7.500.000đ",
-    description: "Máy đẹp 99%, pin khỏe",
-    type: "iphone",
-    image: ["https://via.placeholder.com/260x160?text=iPhone+11+Pro"]
-  },
-  {
-    name: "Samsung Galaxy S21",
-    price: "6.800.000đ",
-    description: "Fullbox chính hãng, BH 6 tháng",
-    type: "android",
-    image: ["https://via.placeholder.com/260x160?text=Galaxy+S21"]
-  },
-  {
-    name: "Acc Free Fire VIP",
-    price: "500.000đ",
-    description: "Acc nhiều skin, súng vip",
-    type: "acc",
-    image: []
-  }
-];
+let products = [];
 
 // ====== HIỂN THỊ SẢN PHẨM ======
 function renderProducts(filterType) {
@@ -41,8 +18,10 @@ function renderProducts(filterType) {
 
     let imageHtml = "";
     if (p.image && p.image.length > 0) {
-      imageHtml = `<img src="${p.image[0]}" alt="${p.name}" width="200" style="border-radius:8px;margin-bottom:10px;">
-      <button onclick="showProductImage(${index})">📷 Xem ảnh</button>`;
+      imageHtml = `
+        <img src="${p.image[0]}" alt="${p.name}" width="200" style="border-radius:8px;margin-bottom:10px;">
+        ${p.image.length > 1 ? `<button onclick="showProductImage(${index})">📷 Xem ${p.image.length} ảnh</button>` : ""}
+      `;
     } else {
       imageHtml = `<div style="width:200px;height:120px;background:#eee;border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:10px;">(Chưa có ảnh)</div>`;
     }
@@ -130,10 +109,13 @@ async function fetchProductsFromSheet() {
     const res = await fetch("https://script.google.com/macros/s/AKfycbwERNk5suUjA5KpJnrGieSUoTE5T6DG9wl4swHqHZ6OAakmqEiLn29NJKSZZuIkN3Mr/exec");
     const data = await res.json();
 
-    // Chuyển đổi image thành mảng nếu chưa đúng định dạng
     products = data.map(p => ({
       ...p,
-      image: Array.isArray(p.image) ? p.image : (p.image ? p.image.split("|") : [])
+      image: Array.isArray(p.image)
+        ? p.image
+        : typeof p.image === "string"
+          ? p.image.split("|").map(s => s.trim()).filter(Boolean)
+          : []
     }));
 
     renderProducts("iphone");
