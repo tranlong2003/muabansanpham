@@ -1,5 +1,25 @@
 // ====== DANH SÁCH SẢN PHẨM MẪU ======
-let products = [];
+let products = [
+  {
+    name: "iPhone 6s 32GB",
+    price: "850.000đ",
+    image: "https://via.placeholder.com/260x160?text=iPhone+11+Pro",
+    describe: "máy full chức năng bao ngon"
+    type: "iphone",
+  },
+  {
+    name: "Samsung Galaxy S21",
+    price: "6.800.000đ",
+    image: "https://via.placeholder.com/260x160?text=Galaxy+S21",
+    type: "android",
+  },
+  {
+    name: "Acc Free Fire VIP",
+    price: "500.000đ",
+    image: "https://via.placeholder.com/260x160?text=Acc+Free+Fire",
+    type: "acc",
+  }
+];
 
 const grid = document.getElementById("productGrid");
 
