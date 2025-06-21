@@ -30,7 +30,8 @@ function renderProducts(filterType) {
       ${imageHtml}
       <p><strong>Giá:</strong> ${p.price}</p>
       <p><strong>Mô tả:</strong> ${p.description || "Không có"}</p>
-      <button onclick="window.open('https://zalo.me/0337457055', '_blank')">Inbox Zalo</button>
+     <a href="https://zalo.me/0337457055" target="_blank" class="zalo-button">💬 Inbox Zalo</a>
+
     `;
     grid.appendChild(div);
   });
