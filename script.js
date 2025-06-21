@@ -29,14 +29,12 @@ function renderProducts(filterType) {
     }
 
     div.innerHTML = `
-  <h3>${p.name}</h3>
-  ${imageHtml}
-  <p><strong>Giá:</strong> ${p.price}</p>
-  <p><strong>Mô tả:</strong> ${p.description || "Không có"}</p>
-  <p><strong>Loại:</strong> ${p.type}
-  <a href="https://zalo.me/0337457055" target="_blank" class="zalo-button">💬 Inbox Zalo</a>
-`;
-
+      <h3>${p.name}</h3>
+      ${imageHtml}
+      <p><strong>Giá:</strong> ${p.price}</p>
+      <p><strong>Mô tả:</strong> ${p.description || "Không có"}</p>
+      <a href="https://zalo.me/0337457055" target="_blank" class="zalo-button">💬 Inbox Zalo</a>
+    `;
     grid.appendChild(div);
   });
 }
@@ -113,15 +111,14 @@ async function fetchProductsFromSheet() {
     const res = await fetch("https://script.google.com/macros/s/AKfycbwERNk5suUjA5KpJnrGieSUoTE5T6DG9wl4swHqHZ6OAakmqEiLn29NJKSZZuIkN3Mr/exec");
     const data = await res.json();
 
-products = data.map(p => ({
-  ...p,
-  image: Array.isArray(p.image)
-    ? p.image
-    : typeof p.image === "string"
-      ? p.image.split("|").map(s => s.trim()).filter(Boolean)
-      : []
-}));
-
+    products = data.map(p => ({
+      ...p,
+      image: Array.isArray(p.image)
+        ? p.image
+        : typeof p.image === "string"
+          ? p.image.split("|").map(s => s.trim()).filter(Boolean)
+          : []
+    }));
 
     renderProducts("iphone");
   } catch (error) {
