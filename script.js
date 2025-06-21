@@ -115,13 +115,16 @@ async function fetchProductsFromSheet() {
     const data = await res.json();
 
     products = data.map(p => ({
-      ...p,
-      image: Array.isArray(p.image)
-        ? p.image
-        : typeof p.image === "string"
-          ? p.image.split("|").map(s => s.trim()).filter(Boolean)
-          : []
-    }));
+  ...p,
+  image: Array.isArray(p.image)
+    ? p.image
+    : typeof p.images === "string"
+      ? p.images.split("|").map(s => s.trim()).filter(Boolean)
+      : [],
+  status: p.status || "",          // đảm bảo lấy đúng giá trị cột status
+  timestamp: p.timestamp || ""     // đảm bảo lấy đúng giá trị cột timestamp
+}));
+
 
     renderProducts("iphone");
   } catch (error) {
