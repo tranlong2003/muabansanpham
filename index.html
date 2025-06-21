@@ -22,13 +22,15 @@
     <div class="rating-section">
       <h2>⭐ Đánh giá shop</h2>
       <form id="ratingForm">
-        <label><input type="radio" name="rating" value="1"> ⭐</label>
-        <label><input type="radio" name="rating" value="2"> ⭐⭐</label>
-        <label><input type="radio" name="rating" value="3"> ⭐⭐⭐</label>
-        <label><input type="radio" name="rating" value="4"> ⭐⭐⭐⭐</label>
-        <label><input type="radio" name="rating" value="5"> ⭐⭐⭐⭐⭐</label><br><br>
-        <textarea id="comment" placeholder="Nhập đánh giá của bạn..." rows="4"></textarea><br>
-        <button type="submit" style="background:green;color:white;padding:10px 15px;border:none;border-radius:6px;">✅ Gửi đánh giá</button>
+        <div class="star-rating" id="starContainer">
+          <input type="radio" id="star5" name="rating" value="5"><label for="star5">★</label>
+          <input type="radio" id="star4" name="rating" value="4"><label for="star4">★</label>
+          <input type="radio" id="star3" name="rating" value="3"><label for="star3">★</label>
+          <input type="radio" id="star2" name="rating" value="2"><label for="star2">★</label>
+          <input type="radio" id="star1" name="rating" value="1"><label for="star1">★</label>
+        </div>
+        <textarea id="comment" placeholder="Nhập đánh giá của bạn..."></textarea>
+        <button type="submit">✅ Gửi đánh giá</button>
       </form>
       <p id="avgRating">🌟 Trung bình đánh giá: Đang tải...</p>
     </div>
