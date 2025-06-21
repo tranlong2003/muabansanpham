@@ -123,7 +123,7 @@ async function fetchProductsFromSheet() {
           : []
     }));
 
-    renderProducts();
+    renderProducts(index.html);
   } catch (error) {
     console.error("❌ Lỗi tải sản phẩm từ Google Sheet:", error);
   }
