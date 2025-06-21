@@ -101,3 +101,15 @@ button[type="submit"] {
   color: #333;
   cursor: pointer;
 }
+.product {
+  background: #fff;
+  border-radius: 10px;
+  padding: 15px;
+  margin-bottom: 20px;
+  box-shadow: 0 0 8px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease;
+}
+.product:hover {
+  transform: scale(1.02);
+}
+
