@@ -37,6 +37,11 @@
       <option value="android">Android</option>
       <option value="acc">Acc Game</option>
     </select>
+    <select id="status" required>
+      <option value="">-- Tình trạng sản phẩm --</option>
+      <option value="Còn hàng">Còn hàng</option>
+      <option value="Đã bán">Đã bán</option>
+    </select>
     <button type="submit">💾 Lưu sản phẩm</button>
   </form>
 
@@ -71,7 +76,7 @@
         div.innerHTML = `
           <div>
             <strong>${p.name}</strong><br>
-            Giá: ${p.price} | Loại: ${p.type}<br>
+            Giá: ${p.price} | Loại: ${p.type} | Trạng thái: ${p.status || "?"}<br>
             <em>${p.description || ""}</em><br>
             <div class="preview-multiple">${imageHTML}</div>
           </div>
@@ -128,19 +133,23 @@
       const price = document.getElementById("price").value.trim();
       const description = document.getElementById("description").value.trim();
       const type = document.getElementById("type").value;
+      const status = document.getElementById("status").value;
 
-      // Lấy toàn bộ ảnh trong preview (dù là upload mới hay ảnh cũ đang sửa)
       const imgTags = document.querySelectorAll("#previewImgs img");
       const images = Array.from(imgTags).map(img => img.src);
 
       if (images.length === 0 && !index) return alert("Vui lòng chọn ảnh sản phẩm.");
 
+      const id = index ? currentProducts[index].id : crypto.randomUUID();
+
       await saveProduct(index, {
+        id,
         name,
         price,
         description,
         type,
-        images
+        images,
+        status
       });
     });
 
@@ -168,6 +177,7 @@
       document.getElementById("price").value = p.price;
       document.getElementById("description").value = p.description;
       document.getElementById("type").value = p.type;
+      document.getElementById("status").value = p.status || "";
 
       const preview = document.getElementById("previewImgs");
       preview.innerHTML = "";
@@ -218,8 +228,5 @@
 
     window.addEventListener("DOMContentLoaded", fetchProducts);
   </script>
-
-  <h3 style="margin-top: 40px;">📋 Danh sách sản phẩm</h3>
-  <div id="productListAdmin"></div>
 </body>
 </html>
