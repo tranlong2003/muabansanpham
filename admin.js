@@ -20,17 +20,18 @@ async function fetchProducts() {
 function renderProductList(products) {
   const container = document.getElementById("productListAdmin");
   container.innerHTML = products.map((p, i) => {
-    const images = Array.isArray(p.image)
-      ? p.image
-      : (typeof p.image === "string" ? p.image.split("|").map(x => x.trim()) : []);
+    const images = Array.isArray(p.images)
+      ? p.images
+      : (typeof p.images === "string" ? p.images.split("|").map(x => x.trim()) : []);
 
     return `
       <div class="product-item">
         ${images[0] ? `<img src="${images[0]}" width="100" alt="Ảnh sản phẩm">` : ""}
         <br><strong>${p.name}</strong><br>
         Giá: ${p.price}<br>
-        Mô tả: ${p.description}<br>
         Loại: ${p.type}<br>
+        Tình trạng: ${p.status || "?"}<br>
+        <em>${p.description}</em><br>
         <button onclick="editProduct(${i})" class="secondary">✏️ Sửa</button>
         <button onclick="deleteProduct(${i})" class="danger">🗑️ Xóa</button>
       </div><hr>
@@ -48,10 +49,11 @@ async function editProduct(index) {
     document.getElementById("price").value = p.price;
     document.getElementById("description").value = p.description;
     document.getElementById("type").value = p.type;
+    document.getElementById("status").value = p.status || "";
 
-    const images = Array.isArray(p.image)
-      ? p.image
-      : (typeof p.image === "string" ? p.image.split("|").map(x => x.trim()) : []);
+    const images = Array.isArray(p.images)
+      ? p.images
+      : (typeof p.images === "string" ? p.images.split("|").map(x => x.trim()) : []);
 
     document.getElementById("previewImg").src = images[0] || "";
     document.getElementById("previewImg").style.display = images.length ? 'block' : 'none';
@@ -90,14 +92,15 @@ async function uploadAndSend(e) {
   const type = document.getElementById("type").value;
   const files = Array.from(document.getElementById("imageFile").files);
   const description = document.getElementById("description").value.trim();
-  const status = document.getElementById("status");
+  const statusEl = document.getElementById("status");
+  const statusVal = statusEl ? statusEl.value : "";
 
-  if (!name || !price || !type || !description) {
+  if (!name || !price || !type || !description || !statusVal) {
     alert("Vui lòng điền đủ thông tin.");
     return;
   }
 
-  status.textContent = "⏳ Đang xử lý...";
+  statusEl.textContent = "⏳ Đang xử lý...";
   let imageUrls = [];
 
   if (files.length > 0) {
@@ -117,27 +120,30 @@ async function uploadAndSend(e) {
       } catch (err) {
         console.error("❌ Lỗi upload ảnh:", err);
         alert("❌ Không thể upload ảnh. Dừng lại.");
-        status.textContent = "";
+        statusEl.textContent = "";
         return;
       }
     }
   } else if (editingIndex !== null) {
-    // Lấy ảnh cũ
     const res = await fetch(API_URL);
     const data = await res.json();
     const oldProduct = data[editingIndex];
-    imageUrls = Array.isArray(oldProduct.image)
-      ? oldProduct.image
-      : (typeof oldProduct.image === "string" ? oldProduct.image.split("|").map(x => x.trim()) : []);
+    imageUrls = Array.isArray(oldProduct.images)
+      ? oldProduct.images
+      : (typeof oldProduct.images === "string" ? oldProduct.images.split("|").map(x => x.trim()) : []);
   }
 
-  // ✅ Gửi dữ liệu
+  const resData = editingIndex !== null ? await fetch(API_URL).then(r => r.json()) : [];
+  const existingId = editingIndex !== null ? resData[editingIndex]?.id : crypto.randomUUID();
+
   const payload = {
+    id: existingId,
     name,
     price,
     type,
     description,
-    image: imageUrls.join("|") // gửi dạng chuỗi, client sẽ parse
+    status: statusVal,
+    images: imageUrls.join("|")
   };
 
   const url = editingIndex !== null ? `${API_URL}?edit=${editingIndex}` : API_URL;
@@ -149,7 +155,7 @@ async function uploadAndSend(e) {
     });
     const result = await res.json();
     if (result.status === "success") {
-      status.textContent = editingIndex !== null ? "✅ Đã cập nhật!" : "✅ Thêm thành công!";
+      statusEl.textContent = editingIndex !== null ? "✅ Đã cập nhật!" : "✅ Thêm thành công!";
       editingIndex = null;
       document.getElementById("productForm").reset();
       document.getElementById("previewImg").style.display = "none";
