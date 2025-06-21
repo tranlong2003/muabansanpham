@@ -116,14 +116,20 @@ button[type="submit"] {
   display: inline-block;
   background-color: #0084ff;
   color: white;
-  padding: 8px 14px;
-  border-radius: 6px;
-  text-decoration: none;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 8px;
   font-weight: bold;
-  transition: background-color 0.2s;
+  font-size: 14px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.3s ease;
+  margin-top: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 .zalo-button:hover {
-  background-color: #005dc1;
+  background-color: #0056b3;
+  text-decoration: none;
 }
 
 
