@@ -19,23 +19,35 @@
     .highlight {
       color: red;
     }
+    .menu {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
     .menu button {
-      margin: 0 5px;
-      padding: 8px 16px;
+      padding: 10px 20px;
       border: none;
-      background: #eee;
+      background: #ddd;
+      border-radius: 6px;
       cursor: pointer;
+      font-weight: bold;
+      transition: background 0.3s;
+    }
+    .menu button:hover {
+      background: #ccc;
     }
     .menu button.active {
       background: #007bff;
       color: white;
     }
+
     .grid {
       display: flex;
       flex-wrap: wrap;
       gap: 20px;
       margin-top: 20px;
     }
+
     .product {
       background: white;
       border-radius: 10px;
@@ -55,6 +67,7 @@
       margin-top: 40px;
       box-shadow: 0 0 8px rgba(0,0,0,0.1);
     }
+
     .star-rating {
       direction: rtl;
       font-size: 32px;
@@ -131,6 +144,14 @@
       border-radius: 10px;
       margin-bottom: 10px;
     }
+
+    #loading {
+      text-align: center;
+      padding: 40px;
+      color: #555;
+      font-style: italic;
+      font-size: 18px;
+    }
   </style>
 </head>
 <body>
@@ -139,12 +160,13 @@
 
     <h2>🔥 Sản phẩm nổi bật</h2>
     <div class="menu">
-      <button class="active" onclick="filter('iphone')">iPhone</button>
+      <button onclick="filter('iphone')">iPhone</button>
       <button onclick="filter('android')">Android</button>
       <button onclick="filter('acc')">Acc Game</button>
     </div>
 
-    <div class="grid" id="productGrid"></div>
+    <div id="loading">⏳ Đang tải sản phẩm...</div>
+    <div class="grid" id="productGrid" style="display:none;"></div>
 
     <div class="rating-section">
       <h2>⭐ Đánh giá shop</h2>
