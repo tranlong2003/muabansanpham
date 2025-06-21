@@ -12,15 +12,17 @@ function renderProducts(filterType) {
     return;
   }
 
-  filtered.forEach((p, index) => {
+  filtered.forEach((p) => {
     const div = document.createElement("div");
     div.className = "product";
+
+    const realIndex = products.findIndex(prod => prod.id === p.id); // Tìm vị trí thật trong mảng products
 
     let imageHtml = "";
     if (p.image && p.image.length > 0) {
       imageHtml = `
         <img src="${p.image[0]}" alt="${p.name}" width="200" style="border-radius:8px;margin-bottom:10px;">
-        ${p.image.length > 1 ? `<button onclick="showProductImage(${index})">📷 Xem ${p.image.length} ảnh</button>` : ""}
+        ${p.image.length > 1 ? `<button class="image-btn" onclick="showProductImage(${realIndex})">📷 Xem ${p.image.length} ảnh</button>` : ""}
       `;
     } else {
       imageHtml = `<div style="width:200px;height:120px;background:#eee;border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:10px;">(Chưa có ảnh)</div>`;
