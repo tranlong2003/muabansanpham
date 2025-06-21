@@ -7,105 +7,130 @@ body {
 }
 
 .container {
-  max-width: 700px;
+  max-width: 1200px;
   margin: auto;
   background: white;
   padding: 25px 30px;
   border-radius: 16px;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
 }
 
-h1 {
-  font-size: 24px;
-  color: #2c7;
-  margin-bottom: 10px;
+h1, h2 {
+  color: #2c3e50;
+  text-align: center;
+  margin-bottom: 15px;
 }
 
 .highlight {
-  color: #2c7;
+  color: #10b981;
   font-weight: bold;
 }
 
-.zalo-link {
-  margin-bottom: 25px;
+/* Menu nút lọc sản phẩm */
+.menu {
   display: flex;
-  align-items: center;
-  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
 }
 
-.zalo-link img {
-  width: 24px;
-  height: 24px;
-}
-
-.zalo-link a {
-  text-decoration: none;
+.menu button {
+  background: #e0e0e0;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s;
   font-weight: bold;
-  color: #0077ff;
+}
+
+.menu button.active,
+.menu button:hover {
+  background: #10b981;
+  color: white;
+}
+
+/* Sản phẩm */
+#productGrid {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  gap: 15px;
+  padding-bottom: 10px;
+  scroll-snap-type: x mandatory;
 }
 
 .product {
-  border: 1px solid #ccc;
+  flex: 0 0 250px;
+  background: #ffffff;
   border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   padding: 15px;
-  margin-bottom: 30px;
+  scroll-snap-align: start;
   text-align: center;
 }
 
 .product img {
   width: 100%;
+  height: 160px;
+  object-fit: cover;
   border-radius: 10px;
 }
 
 .product h3 {
-  color: #222;
-  margin-top: 10px;
+  margin: 10px 0 5px;
+  color: #2c3e50;
 }
 
-button {
-  background: #2c7;
-  border: none;
-  color: white;
-  padding: 10px 16px;
-  border-radius: 8px;
-  margin-top: 10px;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-button:hover {
-  background: #239b56;
-}
-
-form label {
-  display: block;
-  margin-top: 10px;
-}
-
-form input, form textarea {
-  width: 100%;
-  padding: 10px;
-  margin-top: 5px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
+.product p {
+  margin: 4px 0;
   font-size: 14px;
+  color: #555;
 }
 
-form textarea {
-  height: 80px;
-  resize: vertical;
+.product button {
+  margin-top: 10px;
+  background: #10b981;
+  color: white;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
 }
 
-.avg-rating {
-  margin-top: 25px;
-  font-size: 18px;
-  color: #f39c12;
+.product button:hover {
+  background: #0f9f6e;
 }
-.menu {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 20px;
+
+/* Hiển thị ảnh trong modal */
+#imageListModal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
 }
+
+#imageListContent {
+  background: white;
+  max-width: 90%;
+  max-height: 80%;
+  overflow-y: auto;
+  border-radius: 12px;
+  padding: 20px;
+}
+
+#imageListContent img {
+  max-width: 100%;
+  margin-bottom: 10px;
+  border-radius: 12px;
+}
+
+/* Đánh giá sao */
 .rating-section {
   text-align: center;
   max-width: 400px;
@@ -113,140 +138,12 @@ form textarea {
   background: #fff;
   padding: 20px;
   border-radius: 15px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  font-family: Arial;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.stars {
-  display: flex;
-  justify-content: center;
-  margin: 10px 0;
-  font-size: 30px;
-  cursor: pointer;
-}
-
-.star {
-  color: #cccccc;
-  margin: 0 5px;
-  transition: color 0.2s;
-}
-
-.star.active,
-.star:hover,
-.star:hover ~ .star {
-  color: gold;
-}
-
-textarea {
-  width: 100%;
-  margin-top: 10px;
-  height: 80px;
-  resize: none;
-  border-radius: 8px;
-  padding: 8px;
-  border: 1px solid #ccc;
-  font-size: 14px;
-}
-
-button {
-  margin-top: 10px;
-  background: #10b981;
-  color: white;
-  padding: 10px 15px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-#avgRating {
-  margin-top: 15px;
-  font-weight: bold;
-  color: #f59e0b;
-}
-.product-card {
-  width: 200px;
-  padding: 10px;
-  background: #f1f5f9;
-  border-radius: 10px;
-  text-align: center;
-}
-
-.product-card img {
-  width: 100%;
-  height: 150px;
-  object-fit: cover;
-  border-radius: 8px;
-}
-body {
-  font-family: Arial, sans-serif;
-  background: #f9f9f9;
-  margin: 0;
-  padding: 0;
-}
-
-.container {
-  max-width: 800px;
-  margin: auto;
-  padding: 20px;
-  background: white;
-  border-radius: 10px;
-  margin-top: 20px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
-}
-
-h1, h2 {
-  color: #2c3e50;
-  text-align: center;
-}
-
-.highlight {
-  color: #e67e22;
-}
-
-input, select, button {
-  margin: 5px 0;
-  padding: 10px;
-  width: 100%;
-  font-size: 16px;
-}
-
-button {
-  background: #13c60d;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-button:hover {
-  background: #f6065e;
-}
-
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 15px;
-  margin-top: 20px;
-}
-
-.product-card {
-  background: #fefefe;
-  padding: 10px;
-  border-radius: 8px;
-  text-align: center;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
-
-.product-card img {
-  width: 100%;
-  height: auto;
-  border-radius: 5px;
-}
-/* Đánh giá sao */
 .star-rating {
   display: flex;
   justify-content: center;
-  flex-direction: row;
   gap: 5px;
   font-size: 2rem;
   margin-bottom: 10px;
@@ -257,26 +154,37 @@ button:hover {
 }
 
 .star-rating label {
-  color: lightgray;
+  color: #ccc;
   cursor: pointer;
   transition: color 0.2s ease;
 }
 
-/* Khi sao được chọn và những sao trước đó */
-.star-rating input[type="radio"]:checked ~ label {
-  color: lightgray;
-}
-
-.star-rating input[type="radio"]:checked + label,
-.star-rating input[type="radio"]:checked + label ~ label {
-  color: gold;
-}
-
-/* Hover sao */
+.star-rating input[type="radio"]:checked ~ label,
 .star-rating label:hover,
 .star-rating label:hover ~ label {
   color: gold;
 }
+
+/* Form đánh giá */
+textarea {
+  width: 100%;
+  margin-top: 10px;
+  height: 80px;
+  resize: none;
+  border-radius: 8px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+#avgRating {
+  margin-top: 15px;
+  font-weight: bold;
+  color: #f59e0b;
+  text-align: center;
+}
+
+/* Footer */
 .footer {
   background-color: #f0f0f0;
   text-align: center;
