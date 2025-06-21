@@ -17,10 +17,16 @@ function renderProducts(filterType) {
     div.className = "product";
 
     let imageHtml = "";
-    if (p.image && p.image.length > 0) {
+    const images = Array.isArray(p.images)
+      ? p.images
+      : typeof p.images === "string"
+        ? p.images.split("|").map(s => s.trim()).filter(Boolean)
+        : [];
+
+    if (images.length > 0) {
       imageHtml = `
-        <img src="${p.image[0]}" alt="${p.name}" width="200" style="border-radius:8px;margin-bottom:10px;">
-        ${p.image.length > 1 ? `<button onclick="showProductImage(${index})">📷 Xem ${p.image.length} ảnh</button>` : ""}
+        <img src="${images[0]}" alt="${p.name}" width="200" style="border-radius:8px;margin-bottom:10px;">
+        ${images.length > 1 ? `<button onclick="showProductImage(${index})">📷 Xem ${images.length} ảnh</button>` : ""}
       `;
     } else {
       imageHtml = `<div style="width:200px;height:120px;background:#eee;border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:10px;">(Chưa có ảnh)</div>`;
@@ -41,7 +47,11 @@ function renderProducts(filterType) {
 function showProductImage(index) {
   const modal = document.getElementById("imageListModal");
   const content = document.getElementById("imageListContent");
-  const images = products[index].image || [];
+  const images = Array.isArray(products[index].images)
+    ? products[index].images
+    : typeof products[index].images === "string"
+      ? products[index].images.split("|").map(s => s.trim()).filter(Boolean)
+      : [];
 
   if (images.length === 0) {
     content.innerHTML = "<p>Không có ảnh nào.</p>";
@@ -70,7 +80,7 @@ document.getElementById("ratingForm").addEventListener("submit", function (e) {
   const comment = document.getElementById("comment").value.trim();
 
   if (!rating) {
-    alert("Vui lòng chọn số sao."); 
+    alert("Vui lòng chọn số sao.");
     return;
   }
 
@@ -111,10 +121,10 @@ async function fetchProductsFromSheet() {
 
     products = data.map(p => ({
       ...p,
-      image: Array.isArray(p.image)
-        ? p.image
-        : typeof p.image === "string"
-          ? p.image.split("|").map(s => s.trim()).filter(Boolean)
+      images: Array.isArray(p.images)
+        ? p.images
+        : typeof p.images === "string"
+          ? p.images.split("|").map(s => s.trim()).filter(Boolean)
           : []
     }));
 
