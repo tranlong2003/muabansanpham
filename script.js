@@ -109,6 +109,10 @@ function resetRatings() {
 }
 
 // ====== TẢI TỪ GOOGLE SHEET ======
+// Trong renderProducts hoặc fetchProductsFromSheet
+document.getElementById("loading").style.display = "none";
+document.getElementById("productGrid").style.display = "flex";
+
 async function fetchProductsFromSheet() {
   try {
     const res = await fetch("https://script.google.com/macros/s/AKfycbwERNk5suUjA5KpJnrGieSUoTE5T6DG9wl4swHqHZ6OAakmqEiLn29NJKSZZuIkN3Mr/exec");
