@@ -33,8 +33,7 @@ function renderProducts(filterType) {
   ${imageHtml}
   <p><strong>Giá:</strong> ${p.price}</p>
   <p><strong>Mô tả:</strong> ${p.description || "Không có"}</p>
-  <p><strong>Loại:</strong> ${p.type} | <strong>Trạng thái:</strong> ${p.status || "Không rõ"}</p>
-  <p><strong>Thời gian:</strong> ${p.timestamp || "Không rõ"}</p>
+  <p><strong>Loại:</strong> ${p.type}
   <a href="https://zalo.me/0337457055" target="_blank" class="zalo-button">💬 Inbox Zalo</a>
 `;
 
@@ -114,15 +113,13 @@ async function fetchProductsFromSheet() {
     const res = await fetch("https://script.google.com/macros/s/AKfycbwERNk5suUjA5KpJnrGieSUoTE5T6DG9wl4swHqHZ6OAakmqEiLn29NJKSZZuIkN3Mr/exec");
     const data = await res.json();
 
-    products = data.map(p => ({
+products = data.map(p => ({
   ...p,
   image: Array.isArray(p.image)
     ? p.image
-    : typeof p.images === "string"
-      ? p.images.split("|").map(s => s.trim()).filter(Boolean)
-      : [],
-  status: p.status || "",          // đảm bảo lấy đúng giá trị cột status
-  timestamp: p.timestamp || ""     // đảm bảo lấy đúng giá trị cột timestamp
+    : typeof p.image === "string"
+      ? p.image.split("|").map(s => s.trim()).filter(Boolean)
+      : []
 }));
 
 
