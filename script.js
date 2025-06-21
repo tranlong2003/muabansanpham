@@ -18,16 +18,12 @@ function renderProducts(filterType) {
 
     const realIndex = products.findIndex(prod => prod.id === p.id); // Tìm vị trí thật trong mảng products
 
-  div.innerHTML = `
-  <h3>${p.name}</h3>
-  ${imageHtml}
-  <p><strong>Giá:</strong> ${p.price}</p>
-  <p><strong>Mô tả:</strong> ${p.description || "Không có"}</p>
-  <p><strong>Loại:</strong> ${p.type} | <strong>Trạng thái:</strong> ${p.status || "Không rõ"}</p>
-  <p><strong>Thời gian:</strong> ${p.timestamp || "Không rõ"}</p>
-  <a href="https://zalo.me/0337457055" target="_blank" class="zalo-button">💬 Inbox Zalo</a>
-`;
-
+    let imageHtml = "";
+    if (p.image && p.image.length > 0) {
+      imageHtml = `
+        <img src="${p.image[0]}" alt="${p.name}" width="200" style="border-radius:8px;margin-bottom:10px;">
+        ${p.image.length > 1 ? `<button class="image-btn" onclick="showProductImage(${realIndex})">📷 Xem ${p.image.length} ảnh</button>` : ""}
+      `;
     } else {
       imageHtml = `<div style="width:200px;height:120px;background:#eee;border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:10px;">(Chưa có ảnh)</div>`;
     }
@@ -116,15 +112,14 @@ async function fetchProductsFromSheet() {
     const data = await res.json();
 
     products = data.map(p => ({
-  ...p,
-  image: Array.isArray(p.image)
-    ? p.image
-    : typeof p.images === "string"
-      ? p.images.split("|").map(s => s.trim()).filter(Boolean)
-      : [],
-  status: p.status || "",          // đảm bảo lấy đúng giá trị cột status
-  timestamp: p.timestamp || ""     // đảm bảo lấy đúng giá trị cột timestamp
-}));
+      ...p,
+      image: Array.isArray(p.image)
+        ? p.image
+        : typeof p.image === "string"
+          ? p.image.split("|").map(s => s.trim()).filter(Boolean)
+          : []
+    }));
+
     renderProducts("iphone");
   } catch (error) {
     console.error("❌ Lỗi tải sản phẩm từ Google Sheet:", error);
