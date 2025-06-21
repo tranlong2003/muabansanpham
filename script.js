@@ -1,5 +1,6 @@
 let products = [];
 
+// ====== HIỂN THỊ SẢN PHẨM ======
 function renderProducts(filterType) {
   const grid = document.getElementById("productGrid");
   grid.innerHTML = "";
@@ -30,13 +31,13 @@ function renderProducts(filterType) {
       ${imageHtml}
       <p><strong>Giá:</strong> ${p.price}</p>
       <p><strong>Mô tả:</strong> ${p.description || "Không có"}</p>
-     <a href="https://zalo.me/0337457055" target="_blank" class="zalo-button">💬 Inbox Zalo</a>
-
+      <a href="https://zalo.me/0337457055" target="_blank" class="zalo-button">💬 Inbox Zalo</a>
     `;
     grid.appendChild(div);
   });
 }
 
+// ====== XEM ẢNH SẢN PHẨM ======
 function showProductImage(index) {
   const modal = document.getElementById("imageListModal");
   const content = document.getElementById("imageListContent");
@@ -55,30 +56,11 @@ function closeImageListModal() {
   document.getElementById("imageListModal").style.display = "none";
 }
 
+// ====== LỌC THEO LOẠI ======
 function filter(type) {
   document.querySelectorAll(".menu button").forEach(btn => btn.classList.remove("active"));
   event.target.classList.add("active");
   renderProducts(type);
-}
-
-async function fetchProductsFromSheet() {
-  try {
-    const res = await fetch("https://script.google.com/macros/s/AKfycbwERNk5suUjA5KpJnrGieSUoTE5T6DG9wl4swHqHZ6OAakmqEiLn29NJKSZZuIkN3Mr/exec");
-    const data = await res.json();
-
-    products = data.map(p => ({
-      ...p,
-      image: Array.isArray(p.image)
-        ? p.image
-        : typeof p.image === "string"
-          ? p.image.split("|").map(s => s.trim()).filter(Boolean)
-          : []
-    }));
-
-    renderProducts("iphone");
-  } catch (error) {
-    console.error("❌ Lỗi tải sản phẩm từ Google Sheet:", error);
-  }
 }
 
 // ====== ĐÁNH GIÁ SAO ======
@@ -101,6 +83,7 @@ document.getElementById("ratingForm").addEventListener("submit", function (e) {
   renderAverageRating();
 });
 
+// ====== TÍNH SAO TRUNG BÌNH ======
 function renderAverageRating() {
   const ratings = JSON.parse(localStorage.getItem("ratings") || "[]");
   if (ratings.length === 0) {
@@ -112,6 +95,36 @@ function renderAverageRating() {
   document.getElementById("avgRating").textContent = `🌟 Trung bình đánh giá: ${average} (${ratings.length} lượt)`;
 }
 
+function resetRatings() {
+  if (confirm("Bạn có chắc muốn xóa toàn bộ đánh giá không?")) {
+    localStorage.removeItem("ratings");
+    renderAverageRating();
+    alert("✅ Đã reset toàn bộ đánh giá.");
+  }
+}
+
+// ====== TẢI TỪ GOOGLE SHEET ======
+async function fetchProductsFromSheet() {
+  try {
+    const res = await fetch("https://script.google.com/macros/s/AKfycbwERNk5suUjA5KpJnrGieSUoTE5T6DG9wl4swHqHZ6OAakmqEiLn29NJKSZZuIkN3Mr/exec");
+    const data = await res.json();
+
+    products = data.map(p => ({
+      ...p,
+      image: Array.isArray(p.image)
+        ? p.image
+        : typeof p.image === "string"
+          ? p.image.split("|").map(s => s.trim()).filter(Boolean)
+          : []
+    }));
+
+    renderProducts("iphone");
+  } catch (error) {
+    console.error("❌ Lỗi tải sản phẩm từ Google Sheet:", error);
+  }
+}
+
+// ====== TẢI TRANG ======
 window.addEventListener("DOMContentLoaded", async () => {
   await fetchProductsFromSheet();
   renderAverageRating();
