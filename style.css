@@ -1,207 +1,103 @@
 body {
-  font-family: "Segoe UI", sans-serif;
-  background: #f3f4f6;
+  font-family: Arial, sans-serif;
   margin: 0;
-  padding: 20px;
-  color: #333;
+  background: #f3f3f3;
 }
-
 .container {
-  max-width: 1200px;
+  padding: 20px;
+  max-width: 1000px;
   margin: auto;
   background: white;
-  padding: 25px 30px;
-  border-radius: 16px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-}
-
-h1, h2 {
-  color: #2c3e50;
-  text-align: center;
-  margin-bottom: 15px;
-}
-
-.highlight {
-  color: #10b981;
-  font-weight: bold;
-}
-
-/* Menu nút lọc sản phẩm */
-.menu {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
-.menu button {
-  background: #e0e0e0;
-  border: none;
-  padding: 10px 16px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: 0.3s;
-  font-weight: bold;
-}
-
-.menu button.active,
-.menu button:hover {
-  background: #10b981;
-  color: white;
-}
-
-/* Sản phẩm */
-#productGrid {
-  display: flex;
-  flex-wrap: nowrap;
-  overflow-x: auto;
-  gap: 15px;
-  padding-bottom: 10px;
-  scroll-snap-type: x mandatory;
-}
-
-.product {
-  flex: 0 0 250px;
-  background: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  padding: 15px;
-  scroll-snap-align: start;
-  text-align: center;
-}
-
-.product img {
-  width: 100%;
-  height: 160px;
-  object-fit: cover;
   border-radius: 10px;
 }
-
-.product h3 {
-  margin: 10px 0 5px;
-  color: #2c3e50;
+h1, h2 {
+  text-align: center;
 }
-
-.product p {
-  margin: 4px 0;
-  font-size: 14px;
-  color: #555;
+.highlight {
+  color: #d00;
 }
-
-.product button {
-  margin-top: 10px;
-  background: #10b981;
-  color: white;
-  padding: 8px 14px;
+.menu {
+  text-align: center;
+  margin: 20px 0;
+}
+.menu button {
+  margin: 5px;
+  padding: 10px 15px;
   border: none;
-  border-radius: 8px;
+  border-radius: 6px;
+  background: #eee;
   cursor: pointer;
 }
-
-.product button:hover {
-  background: #0f9f6e;
+.menu .active {
+  background: #ff5722;
+  color: white;
 }
-
-/* Hiển thị ảnh trong modal */
-#imageListModal {
-  display: none;
-  position: fixed;
-  z-index: 1000;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.75);
-  justify-content: center;
-  align-items: center;
-  padding: 20px;
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
 }
-
-#imageListContent {
-  background: white;
-  max-width: 90%;
-  max-height: 80%;
-  overflow-y: auto;
-  border-radius: 12px;
-  padding: 20px;
+.product {
+  border: 1px solid #ddd;
+  padding: 15px;
+  border-radius: 10px;
+  background: #fafafa;
+  text-align: center;
 }
-
-#imageListContent img {
-  max-width: 100%;
-  margin-bottom: 10px;
-  border-radius: 12px;
-}
-
-/* Đánh giá sao */
 .rating-section {
-  text-align: center;
-  max-width: 400px;
-  margin: 40px auto;
-  background: #fff;
-  padding: 20px;
-  border-radius: 15px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.star-rating {
-  display: flex;
-  justify-content: center;
-  gap: 5px;
-  font-size: 2rem;
-  margin-bottom: 10px;
-}
-
-.star-rating input[type="radio"] {
-  display: none;
-}
-
-.star-rating label {
-  color: #ccc;
-  cursor: pointer;
-  transition: color 0.2s ease;
-}
-
-.star-rating input[type="radio"]:checked ~ label,
-.star-rating label:hover,
-.star-rating label:hover ~ label {
-  color: gold;
-}
-
-/* Form đánh giá */
-textarea {
-  width: 100%;
-  margin-top: 10px;
-  height: 80px;
-  resize: none;
-  border-radius: 8px;
-  padding: 10px;
-  border: 1px solid #ccc;
-  font-size: 14px;
-}
-
-#avgRating {
-  margin-top: 15px;
-  font-weight: bold;
-  color: #f59e0b;
-  text-align: center;
-}
-
-/* Footer */
-.footer {
-  background-color: #f0f0f0;
-  text-align: center;
-  padding: 20px;
-  font-size: 16px;
-  color: #333;
-  border-top: 2px solid #ccc;
   margin-top: 40px;
 }
-
-.footer a {
-  color: #5e35b1;
-  text-decoration: none;
-  font-weight: 500;
+.star-rating label {
+  font-size: 30px;
+  color: gold;
+  cursor: pointer;
 }
-
-.footer a:hover {
-  text-decoration: underline;
-  color: #7c4dff;
+textarea {
+  width: 100%;
+  height: 80px;
+  margin: 10px 0;
+}
+button[type="submit"] {
+  padding: 10px 15px;
+  background: green;
+  color: white;
+  border: none;
+  border-radius: 6px;
+}
+.footer {
+  margin-top: 40px;
+  text-align: center;
+  font-size: 14px;
+}
+.image-modal {
+  display: none;
+  position: fixed;
+  z-index: 9999;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background-color: rgba(0,0,0,0.75);
+  justify-content: center;
+  align-items: center;
+}
+.image-modal-content {
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  max-width: 500px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+.image-gallery img {
+  width: 100%;
+  margin-bottom: 15px;
+  border-radius: 10px;
+}
+.close-btn {
+  position: absolute;
+  top: 15px;
+  right: 25px;
+  font-size: 28px;
+  color: #333;
+  cursor: pointer;
 }
