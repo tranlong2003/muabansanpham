@@ -1,4 +1,5 @@
-// ====== DANH SÁCH SẢN PHẨM ======
+// === script.js (phiên bản đã đồng bộ ===)
+
 let products = [];
 
 // ====== HIỂN THỊ SẢN PHẨM ======
@@ -20,10 +21,10 @@ function renderProducts(filterType) {
     const realIndex = products.findIndex(prod => prod.id === p.id);
 
     let imageHtml = "";
-    if (p.image && p.image.length > 0) {
+    if (p.images && p.images.length > 0) {
       imageHtml = `
-        <img src="${p.image[0]}" alt="${p.name}" width="200" style="border-radius:8px;margin-bottom:10px;">
-        ${p.image.length > 1 ? `<button class="image-btn" onclick="showProductImage(${realIndex})">📷 Xem ${p.image.length} ảnh</button>` : ""}
+        <img src="${p.images[0]}" alt="${p.name}" width="200" style="border-radius:8px;margin-bottom:10px;">
+        ${p.images.length > 1 ? `<button class="image-btn" onclick="showProductImage(${realIndex})">📷 Xem ${p.images.length} ảnh</button>` : ""}
       `;
     } else {
       imageHtml = `<div style="width:200px;height:120px;background:#eee;border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:10px;">(Chưa có ảnh)</div>`;
@@ -39,10 +40,8 @@ function renderProducts(filterType) {
       statusText = "Còn hàng";
     }
 
-    // === THỜI GIAN ===
-    const postedTime = p.timestamp && p.timestamp !== ""
-      ? p.timestamp
-      : "Không rõ";
+    // Format thời gian đăng
+    let postedTime = p.timestamp || "Không rõ";
 
     div.innerHTML = `
       <h3>${p.name}</h3>
@@ -65,18 +64,12 @@ function renderProducts(filterType) {
   });
 }
 
-// ====== XEM ẢNH SẢN PHẨM ======
 function showProductImage(index) {
   const modal = document.getElementById("imageListModal");
   const content = document.getElementById("imageListContent");
-  const images = products[index].image || [];
+  const images = products[index].images || [];
 
-  if (images.length === 0) {
-    content.innerHTML = "<p>Không có ảnh nào.</p>";
-  } else {
-    content.innerHTML = images.map(img => `<img src="${img}" style="max-width:100%;border-radius:12px;margin-bottom:10px;">`).join("");
-  }
-
+  content.innerHTML = images.map(img => `<img src="${img}" style="max-width:100%;border-radius:12px;margin-bottom:10px;">`).join("");
   modal.style.display = "flex";
 }
 
@@ -84,14 +77,13 @@ function closeImageListModal() {
   document.getElementById("imageListModal").style.display = "none";
 }
 
-// ====== LỌC THEO LOẠI ======
 function filter(type) {
   document.querySelectorAll(".menu button").forEach(btn => btn.classList.remove("active"));
   event.target.classList.add("active");
   renderProducts(type);
 }
 
-// ====== TẢI SẢN PHẨM TỪ GOOGLE SHEET ======
+// ====== LấY TỬ GOOGLE SHEET ======
 async function fetchProductsFromSheet() {
   try {
     const res = await fetch("https://script.google.com/macros/s/AKfycbwERNk5suUjA5KpJnrGieSUoTE5T6DG9wl4swHqHZ6OAakmqEiLn29NJKSZZuIkN3Mr/exec");
@@ -99,20 +91,13 @@ async function fetchProductsFromSheet() {
 
     products = data.map(p => ({
       ...p,
-      image: typeof p.images === "string"
-        ? p.images.split("|").map(img => img.trim()).filter(Boolean)
-        : [],
-      status: p.status || "",
-      timestamp: p.timestamp || ""
+      images: typeof p.images === "string" ? p.images.split("|").map(s => s.trim()).filter(Boolean) : []
     }));
 
     renderProducts("iphone");
   } catch (error) {
-    console.error("❌ Lỗi tải sản phẩm từ Google Sheet:", error);
+    console.error("❌ Lỗi tải sản phẩm:", error);
   }
 }
 
-// ====== TẢI TRANG ======
-window.addEventListener("DOMContentLoaded", async () => {
-  await fetchProductsFromSheet();
-});
+window.addEventListener("DOMContentLoaded", fetchProductsFromSheet);
