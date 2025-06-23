@@ -16,7 +16,7 @@ function renderProducts(filterType) {
     const div = document.createElement("div");
     div.className = "product";
 
-    const realIndex = products.findIndex(prod => prod.id === p.id); // Tìm vị trí thật trong mảng products
+    const realIndex = products.findIndex(prod => prod.id === p.id);
 
     let imageHtml = "";
     if (p.image && p.image.length > 0) {
@@ -28,19 +28,25 @@ function renderProducts(filterType) {
       imageHtml = `<div style="width:200px;height:120px;background:#eee;border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:10px;">(Chưa có ảnh)</div>`;
     }
 
+    // Gán màu cho trạng thái
+    let statusColor = "#555";
+    if (p.status?.toLowerCase().includes("còn")) statusColor = "green";
+    else if (p.status?.toLowerCase().includes("hết")) statusColor = "red";
+    else if (p.status?.toLowerCase().includes("đã bán")) statusColor = "gray";
+
     div.innerHTML = `
       <h3>${p.name}</h3>
       ${imageHtml}
       <p><strong>Giá:</strong> ${p.price}</p>
       <p><strong>Mô tả:</strong> ${p.description || "Không có"}</p>
-      <p><strong>Trạng thái:</strong> ${p.status || "Chưa rõ"}</p>
-     <p><strong>Thời gian:</strong> ${p.timestamp || "Không có"}</p>
-
+      <p><strong>Trạng thái:</strong> <span style="color:${statusColor}; font-weight:bold;">${p.status || "Không rõ"}</span></p>
+      <p><strong>🕒 Thời gian đăng:</strong> ${formatCreatedAt(p.timestamp)}</p>
       <a href="https://zalo.me/0337457055" target="_blank" class="zalo-button">💬 Inbox Zalo</a>
     `;
     grid.appendChild(div);
   });
 }
+
 
 // ====== XEM ẢNH SẢN PHẨM ======
 function showProductImage(index) {
