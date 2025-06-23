@@ -18,6 +18,7 @@ function renderProducts(filterType) {
 
     const realIndex = products.findIndex(prod => prod.id === p.id);
 
+    // === ẢNH SẢN PHẨM ===
     let imageHtml = "";
     if (p.image && p.image.length > 0) {
       imageHtml = `
@@ -28,35 +29,33 @@ function renderProducts(filterType) {
       imageHtml = `<div style="width:200px;height:120px;background:#eee;border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:10px;">(Chưa có ảnh)</div>`;
     }
 
-    // Gán màu cho trạng thái
-    let statusText = p.status || "Không rõ";
+    // === MÀU TRẠNG THÁI ===
+    const statusRaw = (p.status || "").toLowerCase().trim();
     let statusColor = "#555";
-    if (statusText.toLowerCase().includes("còn")) statusColor = "green";
-    else if (statusText.toLowerCase().includes("hết")) statusColor = "red";
-    else if (statusText.toLowerCase().includes("đã bán")) statusColor = "gray";
+    let statusText = p.status || "Chưa rõ";
 
-    // Format thời gian đăng
-    let postedTime = "";
+    if (statusRaw.includes("còn")) {
+      statusColor = "green";
+    } else if (statusRaw.includes("hết")) {
+      statusColor = "red";
+    } else if (statusRaw.includes("đã bán") || statusRaw.includes("da ban")) {
+      statusColor = "gray";
+    }
+
+    // === FORMAT THỜI GIAN ĐĂNG ===
+    let postedTime = "Không rõ";
     if (p.timestamp && !isNaN(new Date(p.timestamp))) {
       const date = new Date(p.timestamp);
-      postedTime = date.toLocaleString('vi-VN', {
-        hour: '2-digit',
-        minute: '2-digit',
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric'
-      });
-    } else {
-      const now = new Date();
-      postedTime = now.toLocaleString('vi-VN', {
-        hour: '2-digit',
-        minute: '2-digit',
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric'
+      postedTime = date.toLocaleString("vi-VN", {
+        hour: "2-digit",
+        minute: "2-digit",
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric"
       });
     }
 
+    // === HTML SẢN PHẨM ===
     div.innerHTML = `
       <h3>${p.name}</h3>
       ${imageHtml}
@@ -103,7 +102,7 @@ document.getElementById("ratingForm").addEventListener("submit", function (e) {
   const comment = document.getElementById("comment").value.trim();
 
   if (!rating) {
-    alert("Vui lòng chọn số sao."); 
+    alert("Vui lòng chọn số sao.");
     return;
   }
 
@@ -144,11 +143,13 @@ async function fetchProductsFromSheet() {
 
     products = data.map(p => ({
       ...p,
-      image: Array.isArray(p.image)
-        ? p.image
-        : typeof p.image === "string"
-        ? p.image.split("|").map(s => s.trim()).filter(Boolean)
-        : []
+      image: Array.isArray(p.images)
+        ? p.images
+        : typeof p.images === "string"
+        ? p.images.split("|").map(s => s.trim()).filter(Boolean)
+        : [],
+      status: p.status || "Chưa rõ",
+      timestamp: p.timestamp || ""
     }));
 
     renderProducts("iphone");
