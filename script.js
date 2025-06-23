@@ -39,9 +39,20 @@ function renderProducts(filterType) {
       statusColor = "green";
       statusText = "Còn hàng";
     }
+    //tg
+function formatCreatedAt(isoString) {
+  if (!isoString) return "Không rõ";
+  const date = new Date(isoString);
+  if (isNaN(date)) return "Không hợp lệ";
 
-    // Format thời gian đăng
-    let postedTime = p.timestamp || "Không rõ";
+  return date.toLocaleString('vi-VN', {
+    hour: '2-digit',
+    minute: '2-digit',
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric'
+  });
+}
 
     div.innerHTML = `
       <h3>${p.name}</h3>
@@ -57,7 +68,8 @@ function renderProducts(filterType) {
           text-shadow: 0.5px 0.5px 1px rgba(0,0,0,0.1);
         ">${statusText}</span>
       </p>
-      <p><strong>🕒 Thời gian đăng:</strong> ${postedTime}</p>
+      // Format thời gian đăng
+     <p><strong>🕒 Thời gian đăng:</strong> ${formatCreatedAt(p.timestamp)}</p>
       <a href="https://zalo.me/0337457055" target="_blank" class="zalo-button">💬 Inbox Zalo</a>
     `;
     grid.appendChild(div);
