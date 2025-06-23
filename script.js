@@ -1,6 +1,6 @@
 let products = [];
 
-// ====== HIỂN THỊ SẢN PHẨM ======
+// ====== HIỂN THỈ SẢN PHẨM ======
 function renderProducts(filterType) {
   const grid = document.getElementById("productGrid");
   grid.innerHTML = "";
@@ -19,6 +19,11 @@ function renderProducts(filterType) {
     const realIndex = products.findIndex(prod => prod.id === p.id);
 
     let imageHtml = "";
+    if (p.images && typeof p.images === 'string') {
+      const imgs = p.images.split('|').map(s => s.trim()).filter(Boolean);
+      p.image = imgs;
+    }
+
     if (p.image && p.image.length > 0) {
       imageHtml = `
         <img src="${p.image[0]}" alt="${p.name}" width="200" style="border-radius:8px;margin-bottom:10px;">
@@ -31,7 +36,7 @@ function renderProducts(filterType) {
     // === MÀU TRẠNG THÁI ===
     const statusRaw = (p.status || "").toLowerCase().trim();
     let statusColor = "red";
-    let statusText = "Hết hàng";
+    let statusText = "Đã bán";
 
     if (statusRaw.includes("còn")) {
       statusColor = "green";
@@ -39,42 +44,22 @@ function renderProducts(filterType) {
     }
 
     // Format thời gian đăng
-    let postedTime = "";
-    if (p.timestamp && !isNaN(new Date(p.timestamp))) {
-      const date = new Date(p.timestamp);
-      postedTime = date.toLocaleString('vi-VN', {
-        hour: '2-digit',
-        minute: '2-digit',
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric'
-      });
-    } else {
-      const now = new Date();
-      postedTime = now.toLocaleString('vi-VN', {
-        hour: '2-digit',
-        minute: '2-digit',
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric'
-      });
-    }
+    let postedTime = p.timestamp || "Không rõ";
 
     div.innerHTML = `
       <h3>${p.name}</h3>
       ${imageHtml}
       <p><strong>Giá:</strong> ${p.price}</p>
       <p><strong>Mô tả:</strong> ${p.description || "Không có"}</p>
-    <p><strong>Trạng thái:</strong> 
-  <span style="
-    color: ${statusColor}; 
-    font-weight: bold; 
-    font-style: italic; 
-    font-size: 16px;
-    text-shadow: 0.5px 0.5px 1px rgba(0,0,0,0.1);
-  ">${statusText}</span>
-</p>
-
+      <p><strong>Trạng thái:</strong> 
+        <span style="
+          color: ${statusColor}; 
+          font-weight: bold; 
+          font-style: italic; 
+          font-size: 16px;
+          text-shadow: 0.5px 0.5px 1px rgba(0,0,0,0.1);
+        ">${statusText}</span>
+      </p>
       <p><strong>🕒 Thời gian đăng:</strong> ${postedTime}</p>
       <a href="https://zalo.me/0337457055" target="_blank" class="zalo-button">💬 Inbox Zalo</a>
     `;
@@ -148,7 +133,7 @@ function resetRatings() {
   }
 }
 
-// ====== TẢI TỪ GOOGLE SHEET ======
+// ====== TẢI Từ GOOGLE SHEET ======
 async function fetchProductsFromSheet() {
   try {
     const res = await fetch("https://script.google.com/macros/s/AKfycbwERNk5suUjA5KpJnrGieSUoTE5T6DG9wl4swHqHZ6OAakmqEiLn29NJKSZZuIkN3Mr/exec");
@@ -156,11 +141,7 @@ async function fetchProductsFromSheet() {
 
     products = data.map(p => ({
       ...p,
-      image: Array.isArray(p.image)
-        ? p.image
-        : typeof p.image === "string"
-        ? p.image.split("|").map(s => s.trim()).filter(Boolean)
-        : []
+      image: typeof p.images === 'string' ? p.images.split("|").map(s => s.trim()).filter(Boolean) : []
     }));
 
     renderProducts("iphone");
