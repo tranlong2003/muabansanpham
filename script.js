@@ -68,7 +68,6 @@ function formatCreatedAt(isoString) {
           text-shadow: 0.5px 0.5px 1px rgba(0,0,0,0.1);
         ">${statusText}</span>
       </p>
-      // Format thời gian đăng
      <p><strong>🕒 Thời gian đăng:</strong> ${formatCreatedAt(p.timestamp)}</p>
       <a href="https://zalo.me/0337457055" target="_blank" class="zalo-button">💬 Inbox Zalo</a>
     `;
