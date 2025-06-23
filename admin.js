@@ -1,32 +1,28 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Quản lý sản phẩm</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quản lý sản phẩm</title>
   <style>
-    body { font-family: Arial, sans-serif; padding: 20px; background: #f0f0f0; }
-    h1 { text-align: center; }
-    form { background: #fff; padding: 20px; border-radius: 10px; max-width: 700px; margin: auto; box-shadow: 0 0 10px #ccc; }
-    input, select, textarea { width: 100%; margin: 8px 0; padding: 10px; border: 1px solid #ccc; border-radius: 5px; }
-    button { padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer; margin-top: 10px; }
+    body { font-family: Arial; padding: 20px; background: #f9f9f9; }
+    form, .product-item { background: #fff; padding: 20px; margin: 20px auto; border-radius: 10px; max-width: 700px; box-shadow: 0 0 5px rgba(0,0,0,0.1); }
+    input, textarea, select { width: 100%; margin: 8px 0; padding: 10px; border: 1px solid #ccc; border-radius: 5px; }
+    button { padding: 10px 15px; margin-top: 10px; border: none; border-radius: 5px; cursor: pointer; }
     .btn-save { background: green; color: white; }
-    .btn-cancel { background: gray; color: white; margin-left: 10px; }
+    .btn-cancel { background: gray; color: white; }
     .btn-delete { background: red; color: white; }
-    .product-list { max-width: 800px; margin: 30px auto; }
-    .product-item { background: #fff; padding: 15px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 8px; }
-    img { max-width: 100px; margin: 5px; border-radius: 5px; }
-    .preview { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+    .preview img { max-width: 100px; margin: 5px; border-radius: 5px; }
   </style>
 </head>
 <body>
 
-  <h1>📦 Quản lý sản phẩm</h1>
+  <h2>📦 Quản lý sản phẩm</h2>
 
   <form id="productForm">
-    <input type="hidden" id="editIndex">
-    <input type="text" id="name" placeholder="Tên sản phẩm" required>
-    <input type="text" id="price" placeholder="Giá bán" required>
+    <input type="hidden" id="editIndex" />
+    <input type="text" id="name" placeholder="Tên sản phẩm" required />
+    <input type="text" id="price" placeholder="Giá bán" required />
     <textarea id="description" placeholder="Mô tả sản phẩm"></textarea>
     <select id="type" required>
       <option value="">-- Chọn loại sản phẩm --</option>
@@ -39,24 +35,24 @@
       <option value="Còn hàng">Còn hàng</option>
       <option value="Đã bán">Đã bán</option>
     </select>
-    <input type="file" id="imageFile" accept="image/*" multiple>
+    <input type="file" id="imageFile" accept="image/*" multiple required />
     <div id="previewImgs" class="preview"></div>
-    <button type="submit" class="btn-save">📂 Lưu sản phẩm</button>
-    <button type="button" onclick="resetForm()" class="btn-cancel">🧹 Hủy</button>
+    <button type="submit" class="btn-save">📂 Lưu</button>
+    <button type="button" onclick="resetForm()" class="btn-cancel">🪹 Hủy</button>
   </form>
 
-  <div class="product-list" id="productList"></div>
+  <div id="productList"></div>
 
   <script>
-    const API_URL = 'https://script.google.com/macros/s/AKfycbwERNk5suUjA5KpJnrGieSUoTE5T6DG9wl4swHqHZ6OAakmqEiLn29NJKSZZuIkN3Mr/exec';
+    const API_URL = 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec';
     let currentProducts = [];
 
     document.getElementById('imageFile').addEventListener('change', function () {
       const preview = document.getElementById('previewImgs');
       preview.innerHTML = '';
-      Array.from(this.files).forEach(file => {
+      [...this.files].forEach(file => {
         const reader = new FileReader();
-        reader.onload = (e) => {
+        reader.onload = e => {
           const img = document.createElement('img');
           img.src = e.target.result;
           preview.appendChild(img);
@@ -73,22 +69,22 @@
       const description = document.getElementById('description').value.trim();
       const type = document.getElementById('type').value;
       const status = document.getElementById('status').value;
-      const timestamp = new Date().toLocaleString("vi-VN");
+      const images = [...document.querySelectorAll('#previewImgs img')].map(img => img.src);
 
-      const images = Array.from(document.querySelectorAll('#previewImgs img')).map(img => img.src);
       if (!name || !price || !type || !status || images.length === 0) {
-        alert("⚠️ Vui lòng điền đủ thông tin và chọn ảnh.");
+        alert("⚠️ Vui lòng điền đủ thông tin và ảnh.");
         return;
       }
 
-      const product = { name, price, description, type, images: images.join('|'), status, timestamp };
+      const product = { name, price, description, type, images, status };
       const url = index ? `${API_URL}?edit=${index}` : API_URL;
+
       await fetch(url, {
         method: 'POST',
         body: JSON.stringify(product),
       });
 
-      alert(index ? "✏️ Đã cập nhật sản phẩm!" : "✅ Đã thêm sản phẩm mới!");
+      alert(index ? "✅ Đã cập nhật" : "✅ Đã thêm mới");
       resetForm();
       loadProducts();
     });
@@ -109,25 +105,14 @@
     function renderProducts(products) {
       const list = document.getElementById('productList');
       list.innerHTML = '';
-
       products.forEach((p, index) => {
         const div = document.createElement('div');
         div.className = 'product-item';
-
-        const imgHTML = (p.image || p.images || "").split("|").map(img => `<img src="${img}" />`).join("");
-
+        const imgs = (p.images || '').split('|').map(i => `<img src="${i}" />`).join('');
         div.innerHTML = `
-          <strong>ID:</strong> ${index + 1}<br>
-          <strong>Tên:</strong> ${p.name}<br>
-          <strong>Giá:</strong> ${p.price}<br>
-          <strong>Mô tả:</strong> ${p.description || ""}<br>
-          <strong>Loại:</strong> ${p.type} | 
-          <strong>Trạng thái:</strong> 
-          <span style="color: ${p.status?.includes('Còn') ? 'green' : 'red'}; font-weight: bold;">
-            ${p.status || "Không rõ"}
-          </span><br>
-          <strong>Thời gian:</strong> ${p.timestamp || ""}<br>
-          <div class="preview">${imgHTML}</div>
+          <strong>${p.name}</strong> - ${p.price} - ${p.type} - <em>${p.status}</em><br>
+          <small>🕒 ${p.timestamp || 'không rõ'}</small><br>
+          <div class="preview">${imgs}</div>
           <button onclick="editProduct(${index})" class="btn-save">Sửa</button>
           <button onclick="deleteProduct(${index})" class="btn-delete">Xóa</button>
         `;
@@ -143,24 +128,14 @@
       document.getElementById('description').value = p.description;
       document.getElementById('type').value = p.type;
       document.getElementById('status').value = p.status;
-
-      const preview = document.getElementById('previewImgs');
-      preview.innerHTML = "";
-      (p.image || p.images || "").split("|").forEach(img => {
-        const image = document.createElement('img');
-        image.src = img;
-        preview.appendChild(image);
-      });
-
+      document.getElementById('previewImgs').innerHTML = (p.images || '').split('|').map(src => `<img src="${src}" />`).join('');
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     async function deleteProduct(index) {
-      const confirmDelete = confirm("❗ Bạn có chắc chắn muốn xóa sản phẩm này?");
-      if (!confirmDelete) return;
-
-      await fetch(`${API_URL}?delete=${index}`, { method: "POST" });
-      alert("🗑️ Đã xóa sản phẩm.");
+      if (!confirm("❗️ Bạn có chắc muốn xóa không?")) return;
+      await fetch(`${API_URL}?delete=${index}`, { method: 'POST' });
+      alert("🗑️ Đã xóa sản phẩm");
       loadProducts();
     }
 
