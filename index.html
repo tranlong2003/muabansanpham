@@ -2,173 +2,90 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Quản lý sản phẩm</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Danh sách sản phẩm</title>
+  <link rel="stylesheet" href="style.css" />
   <style>
-    body { font-family: Arial, sans-serif; background: #f5f5f5; padding: 20px; }
-    h1 { text-align: center; }
-    form { background: white; padding: 20px; border-radius: 10px; max-width: 700px; margin: auto; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-    input, select, textarea { width: 100%; margin: 10px 0; padding: 10px; border: 1px solid #ccc; border-radius: 5px; }
-    button { padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer; }
-    .btn-save { background: green; color: white; }
-    .btn-cancel { background: gray; color: white; margin-left: 10px; }
-    .btn-delete { background: red; color: white; }
-    .product-list { max-width: 800px; margin: 30px auto; }
-    .product-item { background: white; padding: 15px; margin-bottom: 15px; border-radius: 10px; border: 1px solid #ddd; }
-    .preview img { max-width: 100px; margin: 5px; border-radius: 5px; }
-    .preview { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+    .product {
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 15px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .image-btn {
+      margin-top: 5px;
+      background-color: #007bff;
+      color: #fff;
+      padding: 6px 12px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .zalo-button {
+      display: inline-block;
+      margin-top: 10px;
+      background: green;
+      color: white;
+      padding: 8px 12px;
+      border-radius: 6px;
+      text-decoration: none;
+    }
+    .menu {
+      margin: 20px 0;
+      text-align: center;
+    }
+    .menu button {
+      margin: 0 10px;
+      padding: 10px 20px;
+      cursor: pointer;
+      background: #f2f2f2;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+    .menu button.active {
+      background: #007bff;
+      color: white;
+    }
   </style>
 </head>
 <body>
 
-  <h1>📦 Quản lý sản phẩm</h1>
+  <h1 style="text-align:center;">📱 Danh sách sản phẩm</h1>
 
-  <form id="productForm">
-    <input type="hidden" id="editIndex">
-    <input type="text" id="name" placeholder="Tên sản phẩm" required>
-    <input type="text" id="price" placeholder="Giá bán" required>
-    <textarea id="description" placeholder="Mô tả sản phẩm"></textarea>
+  <div class="menu">
+    <button onclick="filter('iphone')" class="active">iPhone</button>
+    <button onclick="filter('android')">Android</button>
+    <button onclick="filter('acc')">Acc Game</button>
+  </div>
 
-    <select id="type" required>
-      <option value="">-- Chọn loại sản phẩm --</option>
-      <option value="iphone">iPhone</option>
-      <option value="android">Android</option>
-      <option value="acc">Acc Game</option>
-    </select>
+  <div id="productGrid"></div>
 
-    <select id="status" required>
-      <option value="">-- Trạng thái --</option>
-      <option value="Còn hàng">Còn hàng</option>
-      <option value="Đã bán">Đã bán</option>
-    </select>
+  <div id="imageListModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);align-items:center;justify-content:center;z-index:1000;">
+    <div style="background:#fff;padding:20px;border-radius:10px;max-width:90%;max-height:90%;overflow:auto;position:relative;">
+      <button onclick="closeImageListModal()" style="position:absolute;top:10px;right:10px;background:red;color:#fff;border:none;border-radius:5px;padding:5px 10px;">Đóng</button>
+      <div id="imageListContent"></div>
+    </div>
+  </div>
 
-    <input type="file" id="imageFile" accept="image/*" multiple>
-    <div id="previewImgs" class="preview"></div>
+  <div style="margin:40px auto;text-align:center;max-width:500px;">
+    <h3>⭐ Đánh giá trải nghiệm</h3>
+    <form id="ratingForm">
+      <div>
+        <label><input type="radio" name="rating" value="1"> 1 ⭐</label>
+        <label><input type="radio" name="rating" value="2"> 2 ⭐</label>
+        <label><input type="radio" name="rating" value="3"> 3 ⭐</label>
+        <label><input type="radio" name="rating" value="4"> 4 ⭐</label>
+        <label><input type="radio" name="rating" value="5"> 5 ⭐</label>
+      </div>
+      <textarea id="comment" placeholder="Để lại nhận xét..." rows="3" style="width:100%;margin-top:10px;"></textarea>
+      <button type="submit" style="margin-top:10px;">Gửi đánh giá</button>
+    </form>
+    <p id="avgRating">🌟 Trung bình đánh giá: Đang tải...</p>
+    <button onclick="resetRatings()">🗑️ Xóa toàn bộ đánh giá</button>
+  </div>
 
-    <button type="submit" class="btn-save">💾 Lưu</button>
-    <button type="button" onclick="resetForm()" class="btn-cancel">🧹 Hủy</button>
-  </form>
-
-  <div class="product-list" id="productList"></div>
-
-  <script>
-    const API_URL = 'https://script.google.com/macros/s/AKfycbwERNk5suUjA5KpJnrGieSUoTE5T6DG9wl4swHqHZ6OAakmqEiLn29NJKSZZuIkN3Mr/exec'; // 👈 thay bằng link đúng của bạn
-    let products = [];
-
-    document.getElementById("imageFile").addEventListener("change", function () {
-      const preview = document.getElementById("previewImgs");
-      preview.innerHTML = "";
-      Array.from(this.files).forEach(file => {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          const img = document.createElement("img");
-          img.src = e.target.result;
-          preview.appendChild(img);
-        };
-        reader.readAsDataURL(file);
-      });
-    });
-
-    document.getElementById("productForm").addEventListener("submit", async function (e) {
-      e.preventDefault();
-      const index = document.getElementById("editIndex").value;
-      const name = document.getElementById("name").value.trim();
-      const price = document.getElementById("price").value.trim();
-      const description = document.getElementById("description").value.trim();
-      const type = document.getElementById("type").value;
-      const status = document.getElementById("status").value;
-      const images = Array.from(document.querySelectorAll('#previewImgs img')).map(img => img.src);
-
-      if (!name || !price || !type || !status || images.length === 0) {
-        alert("⚠️ Vui lòng nhập đầy đủ thông tin và chọn ảnh.");
-        return;
-      }
-
-      const payload = {
-        name, price, description, type, images, status
-      };
-
-      const url = index ? `${API_URL}?edit=${index}` : API_URL;
-      await fetch(url, {
-        method: "POST",
-        body: JSON.stringify(payload)
-      });
-
-      alert(index ? "✅ Đã cập nhật sản phẩm!" : "✅ Đã thêm sản phẩm!");
-      resetForm();
-      loadProducts();
-    });
-
-    function resetForm() {
-      document.getElementById("productForm").reset();
-      document.getElementById("editIndex").value = "";
-      document.getElementById("previewImgs").innerHTML = "";
-    }
-
-    async function loadProducts() {
-      const res = await fetch(API_URL);
-      const data = await res.json();
-      products = data;
-      renderProducts();
-    }
-
-    function renderProducts() {
-      const list = document.getElementById("productList");
-      list.innerHTML = "";
-
-      products.forEach((p, i) => {
-        const div = document.createElement("div");
-        div.className = "product-item";
-
-        const images = (p.images || "").split("|").map(img => `<img src="${img}" />`).join("");
-
-        div.innerHTML = `
-          <strong>ID:</strong> ${p.id || i + 1}<br>
-          <strong>Tên:</strong> ${p.name}<br>
-          <strong>Giá:</strong> ${p.price}<br>
-          <strong>Mô tả:</strong> ${p.description}<br>
-          <strong>Loại:</strong> ${p.type}<br>
-          <strong>Trạng thái:</strong> ${p.status}<br>
-          <strong>Thời gian:</strong> ${p.timestamp || "Không rõ"}<br>
-          <div class="preview">${images}</div>
-          <button onclick="editProduct(${i})" class="btn-save">Sửa</button>
-          <button onclick="deleteProduct(${i})" class="btn-delete">Xóa</button>
-        `;
-
-        list.appendChild(div);
-      });
-    }
-
-    function editProduct(i) {
-      const p = products[i];
-      document.getElementById("editIndex").value = i;
-      document.getElementById("name").value = p.name;
-      document.getElementById("price").value = p.price;
-      document.getElementById("description").value = p.description;
-      document.getElementById("type").value = p.type;
-      document.getElementById("status").value = p.status;
-
-      const preview = document.getElementById("previewImgs");
-      preview.innerHTML = "";
-      (p.images || "").split("|").forEach(src => {
-        const img = document.createElement("img");
-        img.src = src;
-        preview.appendChild(img);
-      });
-
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
-
-    async function deleteProduct(i) {
-      if (!confirm("❗ Bạn có chắc muốn xóa sản phẩm này không?")) return;
-
-      await fetch(`${API_URL}?delete=${i}`, { method: "POST" });
-      alert("🗑️ Đã xóa sản phẩm.");
-      loadProducts();
-    }
-
-    window.addEventListener("DOMContentLoaded", loadProducts);
-  </script>
-
+  <script src="script.js"></script>
 </body>
 </html>
