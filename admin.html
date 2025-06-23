@@ -156,7 +156,7 @@
       const confirmDelete = confirm("❗ Bạn có chắc chắn muốn xóa sản phẩm này?");
       if (!confirmDelete) return;
 
-      await fetch(`${API_URL}?delete=${index}`, { method: "GET" });
+      await fetch(`${API_URL}?delete=${index}`, { method: "POST" });
       alert("🗑️ Đã xóa sản phẩm.");
       loadProducts();
     }
