@@ -1,4 +1,4 @@
-// === script.js (phiên bản đã đồng bộ ===)
+// === script.js (phiên bản đã đồng bộ hoàn chỉnh) ===
 
 let products = [];
 
@@ -39,20 +39,20 @@ function renderProducts(filterType) {
       statusColor = "green";
       statusText = "Còn hàng";
     }
-    //tg
-function formatCreatedAt(isoString) {
-  if (!isoString) return "Không rõ";
-  const date = new Date(isoString);
-  if (isNaN(date)) return "Không hợp lệ";
 
-  return date.toLocaleString('vi-VN', {
-    hour: '2-digit',
-    minute: '2-digit',
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric'
-  });
-}
+    // === FORMAT THỜI GIAN ===
+    function formatCreatedAt(isoString) {
+      if (!isoString) return "Không rõ";
+      const date = new Date(isoString);
+      if (isNaN(date)) return isoString; // hiển thị chuỗi gốc nếu không hợp lệ
+      return date.toLocaleString('vi-VN', {
+        hour: '2-digit',
+        minute: '2-digit',
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+      });
+    }
 
     div.innerHTML = `
       <h3>${p.name}</h3>
@@ -67,7 +67,8 @@ function formatCreatedAt(isoString) {
           font-size: 16px;
           text-shadow: 0.5px 0.5px 1px rgba(0,0,0,0.1);
         ">${statusText}</span>
-     <p><strong>🕒 Thời gian đăng:</strong> ${formatCreatedAt(p.timestamp)}</p>
+      </p>
+      <p><strong>🕒 Thời gian đăng:</strong> ${formatCreatedAt(p.timestamp)}</p>
       <a href="https://zalo.me/0337457055" target="_blank" class="zalo-button">💬 Inbox Zalo</a>
     `;
     grid.appendChild(div);
@@ -93,7 +94,7 @@ function filter(type) {
   renderProducts(type);
 }
 
-// ====== LấY TỬ GOOGLE SHEET ======
+// ====== LẤY TỪ GOOGLE SHEET ======
 async function fetchProductsFromSheet() {
   try {
     const res = await fetch("https://script.google.com/macros/s/AKfycbwERNk5suUjA5KpJnrGieSUoTE5T6DG9wl4swHqHZ6OAakmqEiLn29NJKSZZuIkN3Mr/exec");
