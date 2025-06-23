@@ -32,7 +32,8 @@ function renderProducts(filterType) {
     let statusText = p.status || "Không rõ";
     let statusColor = "#555";
     if (statusText.toLowerCase().includes("còn")) statusColor = "green";
-    else if (statusText.toLowerCase().includes("đã bán")) statusColor = "red";
+    else if (statusText.toLowerCase().includes("hết")) statusColor = "red";
+    else if (statusText.toLowerCase().includes("đã bán")) statusColor = "gray";
 
     // Format thời gian đăng
     let postedTime = "";
