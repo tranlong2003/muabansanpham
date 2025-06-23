@@ -36,18 +36,25 @@ function renderProducts(filterType) {
     else if (statusText.toLowerCase().includes("đã bán")) statusColor = "gray";
 
     // Format thời gian đăng
-    let postedTime = "Không rõ";
-    if (p.timestamp) {
+    let postedTime = "";
+    if (p.timestamp && !isNaN(new Date(p.timestamp))) {
       const date = new Date(p.timestamp);
-      if (!isNaN(date)) {
-        postedTime = date.toLocaleString('vi-VN', {
-          hour: '2-digit',
-          minute: '2-digit',
-          day: '2-digit',
-          month: '2-digit',
-          year: 'numeric'
-        });
-      }
+      postedTime = date.toLocaleString('vi-VN', {
+        hour: '2-digit',
+        minute: '2-digit',
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+      });
+    } else {
+      const now = new Date();
+      postedTime = now.toLocaleString('vi-VN', {
+        hour: '2-digit',
+        minute: '2-digit',
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+      });
     }
 
     div.innerHTML = `
@@ -144,7 +151,7 @@ async function fetchProductsFromSheet() {
         : []
     }));
 
-    renderProducts("iphone"); // CHỈNH ĐÚNG Ở ĐÂY
+    renderProducts("iphone");
   } catch (error) {
     console.error("❌ Lỗi tải sản phẩm từ Google Sheet:", error);
   }
