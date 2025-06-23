@@ -73,14 +73,16 @@
       const description = document.getElementById('description').value.trim();
       const type = document.getElementById('type').value;
       const status = document.getElementById('status').value;
-      const images = Array.from(document.querySelectorAll('#previewImgs img')).map(img => img.src);
+      const timestamp = new Date().toLocaleString();
 
+      const images = Array.from(document.querySelectorAll('#previewImgs img')).map(img => img.src);
       if (!name || !price || !type || !status || images.length === 0) {
         alert("⚠️ Vui lòng điền đầy đủ thông tin và chọn ảnh.");
         return;
       }
 
-      const product = { name, price, description, type, images: images.join('|'), status };
+      const product = { name, price, description, type, image: images.join('|'), status, timestamp };
+
       const url = index ? `${API_URL}?edit=${index}` : API_URL;
       await fetch(url, {
         method: 'POST',
@@ -113,10 +115,10 @@
         const div = document.createElement('div');
         div.className = 'product-item';
 
-        const imgHTML = (p.images || p.image || "").split("|").map(img => `<img src="${img}" />`).join("");
+        const imgHTML = (p.image || "").split("|").map(img => `<img src="${img}" />`).join("");
 
         div.innerHTML = `
-          <strong>ID:</strong> ${p.id || index + 1}<br>
+          <strong>ID:</strong> ${index + 1}<br>
           <strong>Tên:</strong> ${p.name}<br>
           <strong>Giá:</strong> ${p.price}<br>
           <strong>Mô tả:</strong> ${p.description || ""}<br>
@@ -141,7 +143,7 @@
 
       const preview = document.getElementById('previewImgs');
       preview.innerHTML = "";
-      (p.images || p.image || "").split("|").forEach(img => {
+      (p.image || "").split("|").forEach(img => {
         const image = document.createElement('img');
         image.src = img;
         preview.appendChild(image);
