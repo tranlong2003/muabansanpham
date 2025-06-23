@@ -1,174 +1,171 @@
-// ====== CẤU HÌNH ======
-const API_URL = "https://script.google.com/macros/s/AKfycbwERNk5suUjA5KpJnrGieSUoTE5T6DG9wl4swHqHZ6OAakmqEiLn29NJKSZZuIkN3Mr/exec";
-const IMGUR_CLIENT_ID = "546f4b9e7e2922e";
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Quản lý sản phẩm</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; background: #f0f0f0; }
+    h1 { text-align: center; }
+    form { background: #fff; padding: 20px; border-radius: 10px; max-width: 700px; margin: auto; box-shadow: 0 0 10px #ccc; }
+    input, select, textarea { width: 100%; margin: 8px 0; padding: 10px; border: 1px solid #ccc; border-radius: 5px; }
+    button { padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer; margin-top: 10px; }
+    .btn-save { background: green; color: white; }
+    .btn-cancel { background: gray; color: white; margin-left: 10px; }
+    .btn-delete { background: red; color: white; }
+    .product-list { max-width: 800px; margin: 30px auto; }
+    .product-item { background: #fff; padding: 15px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 8px; }
+    img { max-width: 100px; margin: 5px; border-radius: 5px; }
+    .preview { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+  </style>
+</head>
+<body>
 
-let editingIndex = null;
+  <h1>📦 Quản lý sản phẩm</h1>
 
-// ====== TẢI DANH SÁCH SẢN PHẨM ======
-async function fetchProducts() {
-  try {
-    const res = await fetch(API_URL);
-    const data = await res.json();
-    renderProductList(data);
-  } catch (err) {
-    console.error("🔥 Lỗi khi lấy dữ liệu:", err);
-    alert("❌ Không tải được dữ liệu từ Google Sheet.");
-  }
-}
+  <form id="productForm">
+    <input type="hidden" id="editIndex">
+    <input type="text" id="name" placeholder="Tên sản phẩm" required>
+    <input type="text" id="price" placeholder="Giá bán" required>
+    <textarea id="description" placeholder="Mô tả sản phẩm"></textarea>
+    <select id="type" required>
+      <option value="">-- Chọn loại sản phẩm --</option>
+      <option value="iphone">iPhone</option>
+      <option value="android">Android</option>
+      <option value="acc">Acc Game</option>
+    </select>
+    <select id="status" required>
+      <option value="">-- Trạng thái --</option>
+      <option value="Còn hàng">Còn hàng</option>
+      <option value="Đã bán">Đã bán</option>
+    </select>
+    <input type="file" id="imageFile" accept="image/*" multiple>
+    <div id="previewImgs" class="preview"></div>
+    <button type="submit" class="btn-save">📂 Lưu sản phẩm</button>
+    <button type="button" onclick="resetForm()" class="btn-cancel">🧹 Hủy</button>
+  </form>
 
-// ====== HIỂN THỊ DANH SÁCH SẢN PHẨM ======
-function renderProductList(products) {
-  const container = document.getElementById("productListAdmin");
-  container.innerHTML = products.map((p, i) => {
-    const images = Array.isArray(p.images)
-      ? p.images
-      : (typeof p.images === "string" ? p.images.split("|").map(x => x.trim()) : []);
+  <div class="product-list" id="productList"></div>
 
-    return `
-      <div class="product-item">
-        ${images[0] ? `<img src="${images[0]}" width="100" alt="Ảnh sản phẩm">` : ""}
-        <br><strong>${p.name}</strong><br>
-        Giá: ${p.price}<br>
-        Loại: ${p.type}<br>
-        Tình trạng: ${p.status || "?"}<br>
-        <em>${p.description}</em><br>
-        <button onclick="editProduct(${i})" class="secondary">✏️ Sửa</button>
-        <button onclick="deleteProduct(${i})" class="danger">🗑️ Xóa</button>
-      </div><hr>
-    `;
-  }).join("");
-}
+  <script>
+    const API_URL = 'https://script.google.com/macros/s/AKfycbwERNk5suUjA5KpJnrGieSUoTE5T6DG9wl4swHqHZ6OAakmqEiLn29NJKSZZuIkN3Mr/exec';
+    let currentProducts = [];
 
-// ====== CHỈNH SỬA SẢN PHẨM ======
-async function editProduct(index) {
-  try {
-    const res = await fetch(API_URL);
-    const data = await res.json();
-    const p = data[index];
-    document.getElementById("name").value = p.name;
-    document.getElementById("price").value = p.price;
-    document.getElementById("description").value = p.description;
-    document.getElementById("type").value = p.type;
-    document.getElementById("status").value = p.status || "";
+    document.getElementById('imageFile').addEventListener('change', function () {
+      const preview = document.getElementById('previewImgs');
+      preview.innerHTML = '';
+      Array.from(this.files).forEach(file => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const img = document.createElement('img');
+          img.src = e.target.result;
+          preview.appendChild(img);
+        };
+        reader.readAsDataURL(file);
+      });
+    });
 
-    const images = Array.isArray(p.images)
-      ? p.images
-      : (typeof p.images === "string" ? p.images.split("|").map(x => x.trim()) : []);
+    document.getElementById('productForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const index = document.getElementById('editIndex').value;
+      const name = document.getElementById('name').value.trim();
+      const price = document.getElementById('price').value.trim();
+      const description = document.getElementById('description').value.trim();
+      const type = document.getElementById('type').value;
+      const status = document.getElementById('status').value;
+      const timestamp = new Date().toLocaleString("vi-VN");
 
-    document.getElementById("previewImg").src = images[0] || "";
-    document.getElementById("previewImg").style.display = images.length ? 'block' : 'none';
-
-    editingIndex = index;
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  } catch (err) {
-    console.error("⚠️ Lỗi editProduct:", err);
-  }
-}
-
-// ====== XÓA SẢN PHẨM ======
-async function deleteProduct(index) {
-  if (!confirm("Bạn có chắc muốn xóa sản phẩm này?")) return;
-  try {
-    const res = await fetch(`${API_URL}?delete=${index}`);
-    const result = await res.json();
-    if (result.status === "success") {
-      alert("✅ Đã xóa sản phẩm.");
-      fetchProducts();
-    } else {
-      alert("❌ Xóa thất bại.");
-    }
-  } catch (err) {
-    console.error("⚠️ Lỗi deleteProduct:", err);
-    alert("❌ Lỗi khi xóa sản phẩm.");
-  }
-}
-
-// ====== UPLOAD NHIỀU ẢNH & GỬI DỮ LIỆU ======
-async function uploadAndSend(e) {
-  e.preventDefault();
-
-  const name = document.getElementById("name").value.trim();
-  const price = document.getElementById("price").value.trim();
-  const type = document.getElementById("type").value;
-  const files = Array.from(document.getElementById("imageFile").files);
-  const description = document.getElementById("description").value.trim();
-  const statusEl = document.getElementById("status");
-  const statusVal = statusEl ? statusEl.value : "";
-
-  if (!name || !price || !type || !description || !statusVal) {
-    alert("Vui lòng điền đủ thông tin.");
-    return;
-  }
-
-  statusEl.textContent = "⏳ Đang xử lý...";
-  let imageUrls = [];
-
-  if (files.length > 0) {
-    for (const file of files) {
-      const formData = new FormData();
-      formData.append("image", file);
-      try {
-        const res = await fetch("https://api.imgur.com/3/image", {
-          method: "POST",
-          headers: { Authorization: `Client-ID ${IMGUR_CLIENT_ID}` },
-          body: formData
-        });
-        const data = await res.json();
-        if (data.success) {
-          imageUrls.push(data.data.link);
-        }
-      } catch (err) {
-        console.error("❌ Lỗi upload ảnh:", err);
-        alert("❌ Không thể upload ảnh. Dừng lại.");
-        statusEl.textContent = "";
+      const images = Array.from(document.querySelectorAll('#previewImgs img')).map(img => img.src);
+      if (!name || !price || !type || !status || images.length === 0) {
+        alert("⚠️ Vui lòng điền đủ thông tin và chọn ảnh.");
         return;
       }
-    }
-  } else if (editingIndex !== null) {
-    const res = await fetch(API_URL);
-    const data = await res.json();
-    const oldProduct = data[editingIndex];
-    imageUrls = Array.isArray(oldProduct.images)
-      ? oldProduct.images
-      : (typeof oldProduct.images === "string" ? oldProduct.images.split("|").map(x => x.trim()) : []);
-  }
 
-  const resData = editingIndex !== null ? await fetch(API_URL).then(r => r.json()) : [];
-  const existingId = editingIndex !== null ? resData[editingIndex]?.id : crypto.randomUUID();
+      const product = { name, price, description, type, images: images.join('|'), status, timestamp };
+      const url = index ? `${API_URL}?edit=${index}` : API_URL;
+      await fetch(url, {
+        method: 'POST',
+        body: JSON.stringify(product),
+      });
 
-  const payload = {
-    id: existingId,
-    name,
-    price,
-    type,
-    description,
-    status: statusVal,
-    images: imageUrls.join("|")
-  };
-
-  const url = editingIndex !== null ? `${API_URL}?edit=${editingIndex}` : API_URL;
-
-  try {
-    const res = await fetch(url, {
-      method: "POST",
-      body: JSON.stringify(payload)
+      alert(index ? "✏️ Đã cập nhật sản phẩm!" : "✅ Đã thêm sản phẩm mới!");
+      resetForm();
+      loadProducts();
     });
-    const result = await res.json();
-    if (result.status === "success") {
-      statusEl.textContent = editingIndex !== null ? "✅ Đã cập nhật!" : "✅ Thêm thành công!";
-      editingIndex = null;
-      document.getElementById("productForm").reset();
-      document.getElementById("previewImg").style.display = "none";
-      fetchProducts();
-    } else {
-      alert("❌ Lỗi lưu dữ liệu.");
-    }
-  } catch (err) {
-    console.error("⚠️ Lỗi gửi dữ liệu:", err);
-    alert("❌ Gửi dữ liệu thất bại.");
-  }
-}
 
-// ====== EVENT ======
-document.addEventListener("DOMContentLoaded", fetchProducts);
-document.getElementById("productForm").addEventListener("submit", uploadAndSend);
+    function resetForm() {
+      document.getElementById('productForm').reset();
+      document.getElementById('editIndex').value = '';
+      document.getElementById('previewImgs').innerHTML = '';
+    }
+
+    async function loadProducts() {
+      const res = await fetch(API_URL);
+      const data = await res.json();
+      currentProducts = data;
+      renderProducts(data);
+    }
+
+    function renderProducts(products) {
+      const list = document.getElementById('productList');
+      list.innerHTML = '';
+
+      products.forEach((p, index) => {
+        const div = document.createElement('div');
+        div.className = 'product-item';
+
+        const imgHTML = (p.image || p.images || "").split("|").map(img => `<img src="${img}" />`).join("");
+
+        div.innerHTML = `
+          <strong>ID:</strong> ${index + 1}<br>
+          <strong>Tên:</strong> ${p.name}<br>
+          <strong>Giá:</strong> ${p.price}<br>
+          <strong>Mô tả:</strong> ${p.description || ""}<br>
+          <strong>Loại:</strong> ${p.type} | 
+          <strong>Trạng thái:</strong> 
+          <span style="color: ${p.status?.includes('Còn') ? 'green' : 'red'}; font-weight: bold;">
+            ${p.status || "Không rõ"}
+          </span><br>
+          <strong>Thời gian:</strong> ${p.timestamp || ""}<br>
+          <div class="preview">${imgHTML}</div>
+          <button onclick="editProduct(${index})" class="btn-save">Sửa</button>
+          <button onclick="deleteProduct(${index})" class="btn-delete">Xóa</button>
+        `;
+        list.appendChild(div);
+      });
+    }
+
+    function editProduct(index) {
+      const p = currentProducts[index];
+      document.getElementById('editIndex').value = index;
+      document.getElementById('name').value = p.name;
+      document.getElementById('price').value = p.price;
+      document.getElementById('description').value = p.description;
+      document.getElementById('type').value = p.type;
+      document.getElementById('status').value = p.status;
+
+      const preview = document.getElementById('previewImgs');
+      preview.innerHTML = "";
+      (p.image || p.images || "").split("|").forEach(img => {
+        const image = document.createElement('img');
+        image.src = img;
+        preview.appendChild(image);
+      });
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    async function deleteProduct(index) {
+      const confirmDelete = confirm("❗ Bạn có chắc chắn muốn xóa sản phẩm này?");
+      if (!confirmDelete) return;
+
+      await fetch(`${API_URL}?delete=${index}`, { method: "POST" });
+      alert("🗑️ Đã xóa sản phẩm.");
+      loadProducts();
+    }
+
+    window.addEventListener('DOMContentLoaded', loadProducts);
+  </script>
+
+</body>
+</html>
