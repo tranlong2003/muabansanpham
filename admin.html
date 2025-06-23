@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Quản lý sản phẩm</title>
   <style>
     body { font-family: Arial, sans-serif; padding: 20px; background: #f0f0f0; }
@@ -37,18 +37,18 @@
     <select id="status" required>
       <option value="">-- Trạng thái --</option>
       <option value="Còn hàng">Còn hàng</option>
-      <option value="Đã bán">Đã bán</option>
+      <option value="Hết hàng">Hết hàng</option>
     </select>
     <input type="file" id="imageFile" accept="image/*" multiple>
     <div id="previewImgs" class="preview"></div>
-    <button type="submit" class="btn-save">💾 Lưu sản phẩm</button>
+    <button type="submit" class="btn-save">📏 Lưu sản phẩm</button>
     <button type="button" onclick="resetForm()" class="btn-cancel">🧹 Hủy</button>
   </form>
 
   <div class="product-list" id="productList"></div>
 
   <script>
-    const API_URL = 'https://script.google.com/macros/s/AKfycbwERNk5suUjA5KpJnrGieSUoTE5T6DG9wl4swHqHZ6OAakmqEiLn29NJKSZZuIkN3Mr/exec';
+    const API_URL = 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec';
     let currentProducts = [];
 
     document.getElementById('imageFile').addEventListener('change', function () {
@@ -76,17 +76,13 @@
       const images = Array.from(document.querySelectorAll('#previewImgs img')).map(img => img.src);
 
       if (!name || !price || !type || !status || images.length === 0) {
-        alert("⚠️ Vui lòng điền đầy đủ thông tin và chọn ảnh.");
+        alert("⚠️ Vui lòng điền đủ thông tin và chọn ảnh.");
         return;
       }
 
-      const product = { name, price, description, type, image: images.join('|'), status };
-
+      const product = { name, price, description, type, images: images.join('|'), status };
       const url = index ? `${API_URL}?edit=${index}` : API_URL;
-      await fetch(url, {
-        method: 'POST',
-        body: JSON.stringify(product),
-      });
+      await fetch(url, { method: 'POST', body: JSON.stringify(product) });
 
       alert(index ? "✏️ Đã cập nhật sản phẩm!" : "✅ Đã thêm sản phẩm mới!");
       resetForm();
@@ -109,23 +105,21 @@
     function renderProducts(products) {
       const list = document.getElementById('productList');
       list.innerHTML = '';
-
       products.forEach((p, index) => {
         const div = document.createElement('div');
         div.className = 'product-item';
-        const imgHTML = (p.image || "").split("|").map(img => `<img src="${img}" />`).join("");
+        const imgHTML = (p.images || "").split("|").map(img => `<img src="${img}" />`).join("");
 
         div.innerHTML = `
           <strong>ID:</strong> ${index + 1}<br>
           <strong>Tên:</strong> ${p.name}<br>
           <strong>Giá:</strong> ${p.price}<br>
           <strong>Mô tả:</strong> ${p.description || ""}<br>
-          <strong>Loại:</strong> ${p.type}<br>
-          <strong>Trạng thái:</strong> ${p.status || "Không rõ"}<br>
+          <strong>Loại:</strong> ${p.type} | <strong>Trạng thái:</strong> ${p.status || "?"}<br>
           <strong>Thời gian:</strong> ${p.timestamp || ""}<br>
           <div class="preview">${imgHTML}</div>
-          <button onclick="editProduct(${index})" class="btn-save">✏️ Sửa</button>
-          <button onclick="deleteProduct(${index})" class="btn-delete">🗑️ Xóa</button>
+          <button onclick="editProduct(${index})" class="btn-save">Sửa</button>
+          <button onclick="deleteProduct(${index})" class="btn-delete">Xóa</button>
         `;
         list.appendChild(div);
       });
@@ -142,19 +136,17 @@
 
       const preview = document.getElementById('previewImgs');
       preview.innerHTML = "";
-      (p.image || "").split("|").forEach(img => {
+      (p.images || "").split("|").forEach(img => {
         const image = document.createElement('img');
         image.src = img;
         preview.appendChild(image);
       });
-
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     async function deleteProduct(index) {
-      const confirmDelete = confirm("❗ Bạn có chắc chắn muốn xóa sản phẩm này?");
+      const confirmDelete = confirm("❗️ Bạn có chắc chắn muốn xóa sản phẩm này?");
       if (!confirmDelete) return;
-
       await fetch(`${API_URL}?delete=${index}`, { method: "POST" });
       alert("🗑️ Đã xóa sản phẩm.");
       loadProducts();
@@ -162,6 +154,5 @@
 
     window.addEventListener('DOMContentLoaded', loadProducts);
   </script>
-
 </body>
 </html>
