@@ -16,7 +16,7 @@ function renderProducts(filterType) {
     const div = document.createElement("div");
     div.className = "product";
 
-    const realIndex = products.findIndex(prod => prod.id === p.id); // Tìm vị trí thật trong mảng products
+    const realIndex = products.findIndex(prod => prod.id === p.id);
 
     let imageHtml = "";
     if (p.image && p.image.length > 0) {
@@ -28,14 +28,35 @@ function renderProducts(filterType) {
       imageHtml = `<div style="width:200px;height:120px;background:#eee;border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:10px;">(Chưa có ảnh)</div>`;
     }
 
+    // Gán màu cho trạng thái
+    let statusText = p.status || "Không rõ";
+    let statusColor = "#555";
+    if (statusText.toLowerCase().includes("còn")) statusColor = "green";
+    else if (statusText.toLowerCase().includes("hết")) statusColor = "red";
+    else if (statusText.toLowerCase().includes("đã bán")) statusColor = "gray";
+
+    // Format thời gian đăng
+    let postedTime = "Không rõ";
+    if (p.timestamp) {
+      const date = new Date(p.timestamp);
+      if (!isNaN(date)) {
+        postedTime = date.toLocaleString('vi-VN', {
+          hour: '2-digit',
+          minute: '2-digit',
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric'
+        });
+      }
+    }
+
     div.innerHTML = `
       <h3>${p.name}</h3>
       ${imageHtml}
       <p><strong>Giá:</strong> ${p.price}</p>
       <p><strong>Mô tả:</strong> ${p.description || "Không có"}</p>
-      <p><strong>Trạng thái:</strong> ${p.status || "Chưa rõ"}</p>
-     <p><strong>Thời gian:</strong> ${p.timestamp || "Không có"}</p>
-
+      <p><strong>Trạng thái:</strong> <span style="color:${statusColor}; font-weight:bold;">${statusText}</span></p>
+      <p><strong>🕒 Thời gian đăng:</strong> ${postedTime}</p>
       <a href="https://zalo.me/0337457055" target="_blank" class="zalo-button">💬 Inbox Zalo</a>
     `;
     grid.appendChild(div);
@@ -119,11 +140,11 @@ async function fetchProductsFromSheet() {
       image: Array.isArray(p.image)
         ? p.image
         : typeof p.image === "string"
-          ? p.image.split("|").map(s => s.trim()).filter(Boolean)
-          : []
+        ? p.image.split("|").map(s => s.trim()).filter(Boolean)
+        : []
     }));
 
-    renderProducts(index.html);
+    renderProducts("iphone"); // CHỈNH ĐÚNG Ở ĐÂY
   } catch (error) {
     console.error("❌ Lỗi tải sản phẩm từ Google Sheet:", error);
   }
