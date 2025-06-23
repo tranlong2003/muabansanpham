@@ -18,7 +18,6 @@ function renderProducts(filterType) {
 
     const realIndex = products.findIndex(prod => prod.id === p.id);
 
-    // === ẢNH SẢN PHẨM ===
     let imageHtml = "";
     if (p.image && p.image.length > 0) {
       imageHtml = `
@@ -29,7 +28,7 @@ function renderProducts(filterType) {
       imageHtml = `<div style="width:200px;height:120px;background:#eee;border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:10px;">(Chưa có ảnh)</div>`;
     }
 
-    // === MÀU TRẠNG THÁI ===
+      // === MÀU TRẠNG THÁI ===
     const statusRaw = (p.status || "").toLowerCase().trim();
     let statusColor = "red";
     let statusText = "Hết hàng";
@@ -38,21 +37,28 @@ function renderProducts(filterType) {
       statusColor = "green";
       statusText = "Còn hàng";
     }
-
-    // === FORMAT THỜI GIAN ĐĂNG ===
-    let postedTime = "Không rõ";
+    // Format thời gian đăng
+    let postedTime = "";
     if (p.timestamp && !isNaN(new Date(p.timestamp))) {
       const date = new Date(p.timestamp);
-      postedTime = date.toLocaleString("vi-VN", {
-        hour: "2-digit",
-        minute: "2-digit",
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric"
+      postedTime = date.toLocaleString('vi-VN', {
+        hour: '2-digit',
+        minute: '2-digit',
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+      });
+    } else {
+      const now = new Date();
+      postedTime = now.toLocaleString('vi-VN', {
+        hour: '2-digit',
+        minute: '2-digit',
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
       });
     }
 
-    // === HTML SẢN PHẨM ===
     div.innerHTML = `
       <h3>${p.name}</h3>
       ${imageHtml}
@@ -92,6 +98,46 @@ function filter(type) {
   renderProducts(type);
 }
 
+// ====== ĐÁNH GIÁ SAO ======
+document.getElementById("ratingForm").addEventListener("submit", function (e) {
+  e.preventDefault();
+  const rating = document.querySelector('input[name="rating"]:checked');
+  const comment = document.getElementById("comment").value.trim();
+
+  if (!rating) {
+    alert("Vui lòng chọn số sao."); 
+    return;
+  }
+
+  const ratings = JSON.parse(localStorage.getItem("ratings") || "[]");
+  ratings.push({ rating: parseInt(rating.value), comment });
+  localStorage.setItem("ratings", JSON.stringify(ratings));
+
+  alert("✅ Đánh giá đã được ghi nhận. Cảm ơn bạn!");
+  this.reset();
+  renderAverageRating();
+});
+
+// ====== TÍNH SAO TRUNG BÌNH ======
+function renderAverageRating() {
+  const ratings = JSON.parse(localStorage.getItem("ratings") || "[]");
+  if (ratings.length === 0) {
+    document.getElementById("avgRating").textContent = "🌟 Trung bình đánh giá: Chưa có";
+    return;
+  }
+  const total = ratings.reduce((sum, r) => sum + r.rating, 0);
+  const average = (total / ratings.length).toFixed(1);
+  document.getElementById("avgRating").textContent = `🌟 Trung bình đánh giá: ${average} (${ratings.length} lượt)`;
+}
+
+function resetRatings() {
+  if (confirm("Bạn có chắc muốn xóa toàn bộ đánh giá không?")) {
+    localStorage.removeItem("ratings");
+    renderAverageRating();
+    alert("✅ Đã reset toàn bộ đánh giá.");
+  }
+}
+
 // ====== TẢI TỪ GOOGLE SHEET ======
 async function fetchProductsFromSheet() {
   try {
@@ -100,13 +146,11 @@ async function fetchProductsFromSheet() {
 
     products = data.map(p => ({
       ...p,
-      image: Array.isArray(p.images)
-        ? p.images
-        : typeof p.images === "string"
-        ? p.images.split("|").map(s => s.trim()).filter(Boolean)
-        : [],
-      status: p.status || "",
-      timestamp: p.timestamp || ""
+      image: Array.isArray(p.image)
+        ? p.image
+        : typeof p.image === "string"
+        ? p.image.split("|").map(s => s.trim()).filter(Boolean)
+        : []
     }));
 
     renderProducts("iphone");
@@ -118,4 +162,5 @@ async function fetchProductsFromSheet() {
 // ====== TẢI TRANG ======
 window.addEventListener("DOMContentLoaded", async () => {
   await fetchProductsFromSheet();
+  renderAverageRating();
 });
