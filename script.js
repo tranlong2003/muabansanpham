@@ -1,6 +1,7 @@
+// ====== DANH SÁCH SẢN PHẨM ======
 let products = [];
 
-// ====== HIỂN THỈ SẢN PHẨM ======
+// ====== HIỂN THỊ SẢN PHẨM ======
 function renderProducts(filterType) {
   const grid = document.getElementById("productGrid");
   grid.innerHTML = "";
@@ -19,11 +20,6 @@ function renderProducts(filterType) {
     const realIndex = products.findIndex(prod => prod.id === p.id);
 
     let imageHtml = "";
-    if (p.images && typeof p.images === 'string') {
-      const imgs = p.images.split('|').map(s => s.trim()).filter(Boolean);
-      p.image = imgs;
-    }
-
     if (p.image && p.image.length > 0) {
       imageHtml = `
         <img src="${p.image[0]}" alt="${p.name}" width="200" style="border-radius:8px;margin-bottom:10px;">
@@ -43,8 +39,10 @@ function renderProducts(filterType) {
       statusText = "Còn hàng";
     }
 
-    // Format thời gian đăng
-    let postedTime = p.timestamp || "Không rõ";
+    // === THỜI GIAN ===
+    const postedTime = p.timestamp && p.timestamp !== ""
+      ? p.timestamp
+      : "Không rõ";
 
     div.innerHTML = `
       <h3>${p.name}</h3>
@@ -93,47 +91,7 @@ function filter(type) {
   renderProducts(type);
 }
 
-// ====== ĐÁNH GIÁ SAO ======
-document.getElementById("ratingForm").addEventListener("submit", function (e) {
-  e.preventDefault();
-  const rating = document.querySelector('input[name="rating"]:checked');
-  const comment = document.getElementById("comment").value.trim();
-
-  if (!rating) {
-    alert("Vui lòng chọn số sao."); 
-    return;
-  }
-
-  const ratings = JSON.parse(localStorage.getItem("ratings") || "[]");
-  ratings.push({ rating: parseInt(rating.value), comment });
-  localStorage.setItem("ratings", JSON.stringify(ratings));
-
-  alert("✅ Đánh giá đã được ghi nhận. Cảm ơn bạn!");
-  this.reset();
-  renderAverageRating();
-});
-
-// ====== TÍNH SAO TRUNG BÌNH ======
-function renderAverageRating() {
-  const ratings = JSON.parse(localStorage.getItem("ratings") || "[]");
-  if (ratings.length === 0) {
-    document.getElementById("avgRating").textContent = "🌟 Trung bình đánh giá: Chưa có";
-    return;
-  }
-  const total = ratings.reduce((sum, r) => sum + r.rating, 0);
-  const average = (total / ratings.length).toFixed(1);
-  document.getElementById("avgRating").textContent = `🌟 Trung bình đánh giá: ${average} (${ratings.length} lượt)`;
-}
-
-function resetRatings() {
-  if (confirm("Bạn có chắc muốn xóa toàn bộ đánh giá không?")) {
-    localStorage.removeItem("ratings");
-    renderAverageRating();
-    alert("✅ Đã reset toàn bộ đánh giá.");
-  }
-}
-
-// ====== TẢI Từ GOOGLE SHEET ======
+// ====== TẢI SẢN PHẨM TỪ GOOGLE SHEET ======
 async function fetchProductsFromSheet() {
   try {
     const res = await fetch("https://script.google.com/macros/s/AKfycbwERNk5suUjA5KpJnrGieSUoTE5T6DG9wl4swHqHZ6OAakmqEiLn29NJKSZZuIkN3Mr/exec");
@@ -141,7 +99,11 @@ async function fetchProductsFromSheet() {
 
     products = data.map(p => ({
       ...p,
-      image: typeof p.images === 'string' ? p.images.split("|").map(s => s.trim()).filter(Boolean) : []
+      image: typeof p.images === "string"
+        ? p.images.split("|").map(img => img.trim()).filter(Boolean)
+        : [],
+      status: p.status || "",
+      timestamp: p.timestamp || ""
     }));
 
     renderProducts("iphone");
@@ -153,5 +115,4 @@ async function fetchProductsFromSheet() {
 // ====== TẢI TRANG ======
 window.addEventListener("DOMContentLoaded", async () => {
   await fetchProductsFromSheet();
-  renderAverageRating();
 });
