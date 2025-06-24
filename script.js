@@ -12,11 +12,21 @@ function renderProducts(type) {
   }
 
   filtered.forEach((p, index) => {
-    const images = typeof p.images === "string" ? p.images.split("|") : [];
-    const imgHTML = images.length
-      ? `<img src="${images[0]}" alt="${p.name}" style="width:100%;border-radius:8px;">
-         ${images.length > 1 ? `<button onclick="showProductImage(${index})">📷 Xem ${images.length} ảnh</button>` : ""}`
-      : `<div style="background:#eee;height:120px;border-radius:8px;display:flex;align-items:center;justify-content:center;">(Không có ảnh)</div>`;
+  const images = typeof p.images === "string" ? p.images.split("|") : [];
+  
+  const imgHTML = images.length
+    ? `
+      <img src="${images[0]}" alt="${p.name}" style="width:100%;border-radius:8px;">
+      <button class="view-images-btn" onclick="showProductImage(${index})">
+        📷 Xem ${images.length} ảnh
+      </button>
+      `
+    : `
+      <div style="background:#eee;height:120px;border-radius:8px;display:flex;align-items:center;justify-content:center;">
+        (Không có ảnh)
+      </div>
+    `;
+
 
     const status = (p.status || "").toLowerCase().includes("còn") ? `<span style="color:green;font-weight:bold;">Còn hàng</span>` : `<span style="color:red;font-weight:bold;">Đã bán</span>`;
 
