@@ -1,10 +1,11 @@
 let products = [];
+const API_URL = "https://script.google.com/macros/s/AKfycbyiPIHkw5ve1ogTtrdSBQaUjtOmxfbq88YrBeRRM55Itgq2DLEZg6IK4B4J-cM_WECo/exec"; // thay nếu cần
 
 function renderProducts(filterType) {
   const grid = document.getElementById("productGrid");
   grid.innerHTML = "";
 
-  const filtered = products.filter(p => p.type.toLowerCase() === filterType.toLowerCase());
+  const filtered = products.filter(p => p.type === filterType);
 
   if (filtered.length === 0) {
     grid.innerHTML = `<p style="color: orange;">⚠️ Không có sản phẩm nào thuộc loại "${filterType}"</p>`;
@@ -15,36 +16,52 @@ function renderProducts(filterType) {
     const div = document.createElement("div");
     div.className = "product";
 
-    const imageHtml = (p.images && p.images.length > 0)
-      ? `<img src="${p.images[0]}" alt="${p.name}" width="200" style="border-radius:8px;margin-bottom:10px;">
-        ${p.images.length > 1 ? `<button onclick="showProductImage(${index})">📷 Xem ${p.images.length} ảnh</button>` : ""}`
-      : `<div style="width:200px;height:120px;background:#eee;border-radius:8px;display:flex;align-items:center;justify-content:center;">(Không có ảnh)</div>`;
+    let imageHtml = "";
+    const imgs = (typeof p.images === "string" ? p.images.split("|") : []).filter(Boolean);
 
-    const status = (p.status || "").toLowerCase().includes("còn")
-      ? `<span style="color:green;font-weight:bold;">Còn hàng</span>`
-      : `<span style="color:red;font-weight:bold;">Đã bán</span>`;
+    if (imgs.length > 0) {
+      imageHtml = `
+        <img src="${imgs[0]}" alt="${p.name}">
+        ${imgs.length > 1 ? `<button class="image-btn" onclick="showProductImage(${index})">📷 Xem ${imgs.length} ảnh</button>` : ""}
+      `;
+    } else {
+      imageHtml = `<div style="height: 120px; background: #eee; display:flex; justify-content:center; align-items:center;">(Không có ảnh)</div>`;
+    }
 
-    const date = p.timestamp ? new Date(p.timestamp) : null;
-    const timeDisplay = (date && !isNaN(date)) ? date.toLocaleString('vi-VN') : "Không rõ";
+    const status = (p.status || "").toLowerCase();
+    const statusColor = status.includes("còn") ? "green" : "red";
+    const statusText = status.includes("còn") ? "Còn hàng" : "Đã bán";
+
+    const time = formatTime(p.timestamp);
 
     div.innerHTML = `
       <h3>${p.name}</h3>
       ${imageHtml}
       <p><strong>Giá:</strong> ${p.price}</p>
-      <p><strong>Mô tả:</strong> ${p.description || "Không có"}</p>
-      <p><strong>Trạng thái:</strong> ${status}</p>
-      <p><strong>🕒 Thời gian:</strong> ${timeDisplay}</p>
-      <a href="https://zalo.me/0337457055" target="_blank" style="color:white;background:#0084ff;padding:8px 12px;border-radius:6px;display:inline-block;text-decoration:none;">💬 Inbox Zalo</a>
+      <p><strong>Mô tả:</strong> ${p.description}</p>
+      <p><strong>Trạng thái:</strong> <span style="color:${statusColor}; font-weight:bold;">${statusText}</span></p>
+      <p><strong>🕒 Thời gian:</strong> ${time}</p>
+      <a href="https://zalo.me/0337457055" target="_blank" class="zalo-button">💬 Inbox Zalo</a>
     `;
     grid.appendChild(div);
+  });
+}
+
+function formatTime(isoString) {
+  if (!isoString) return "Không rõ";
+  const d = new Date(isoString);
+  if (isNaN(d)) return "Không rõ";
+  return d.toLocaleString("vi-VN", {
+    hour: "2-digit", minute: "2-digit",
+    day: "2-digit", month: "2-digit", year: "numeric"
   });
 }
 
 function showProductImage(index) {
   const modal = document.getElementById("imageListModal");
   const content = document.getElementById("imageListContent");
-  const images = products[index].images || [];
-  content.innerHTML = images.map(src => `<img src="${src}" style="max-width:100%;margin-bottom:10px;border-radius:10px;">`).join("");
+  const imgs = (products[index].images || "").split("|").filter(Boolean);
+  content.innerHTML = imgs.map(src => `<img src="${src}" style="max-width:100%; margin-bottom:10px; border-radius:10px;">`).join("");
   modal.style.display = "flex";
 }
 
@@ -60,15 +77,12 @@ function filter(type) {
 
 async function fetchProductsFromSheet() {
   try {
-    const res = await fetch("https://script.google.com/macros/s/AKfycbyiPIHkw5ve1ogTtrdSBQaUjtOmxfbq88YrBeRRM55Itgq2DLEZg6IK4B4J-cM_WECo/exec"); // Đổi thành URL script mới
+    const res = await fetch(API_URL);
     const data = await res.json();
-    products = data.map(p => ({
-      ...p,
-      images: typeof p.images === "string" ? p.images.split("|").map(i => i.trim()) : []
-    }));
+    products = data;
     renderProducts("iphone");
-  } catch (err) {
-    console.error("Lỗi tải sản phẩm:", err);
+  } catch (e) {
+    console.error("Lỗi tải dữ liệu:", e);
   }
 }
 
