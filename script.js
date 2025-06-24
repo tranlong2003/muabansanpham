@@ -60,7 +60,7 @@ function filter(type) {
 
 async function fetchProductsFromSheet() {
   try {
-    const res = await fetch("https://script.google.com/macros/s/AKfycbyiPIHkw5ve1ogTtrdSBQaUjtOmxfbq88YrBeRRM55Itgq2DLEZg6IK4B4J-cM_WECo/exec); // Đổi thành URL script mới
+    const res = await fetch("https://script.google.com/macros/s/AKfycbyiPIHkw5ve1ogTtrdSBQaUjtOmxfbq88YrBeRRM55Itgq2DLEZg6IK4B4J-cM_WECo/exec"); // Đổi thành URL script mới
     const data = await res.json();
     products = data.map(p => ({
       ...p,
