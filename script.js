@@ -4,59 +4,47 @@ function renderProducts(filterType) {
   const grid = document.getElementById("productGrid");
   grid.innerHTML = "";
 
-  const filtered = products.filter(p => p.type === filterType);
+  const filtered = products.filter(p => p.type.toLowerCase() === filterType.toLowerCase());
 
   if (filtered.length === 0) {
     grid.innerHTML = `<p style="color: orange;">⚠️ Không có sản phẩm nào thuộc loại "${filterType}"</p>`;
     return;
   }
 
-  filtered.forEach((p) => {
+  filtered.forEach((p, index) => {
     const div = document.createElement("div");
     div.className = "product";
 
-    let imageHtml = "";
-    if (p.images && p.images.length > 0) {
-      const imgs = typeof p.images === "string" ? p.images.split("|") : p.images;
-      imageHtml = `
-        <img src="${imgs[0]}" alt="${p.name}" width="200" style="border-radius:8px;margin-bottom:10px;">
-        ${imgs.length > 1 ? `<button onclick="showProductImage(${p.id})">📷 Xem ${imgs.length} ảnh</button>` : ""}
-      `;
-    } else {
-      imageHtml = `<div style="width:200px;height:120px;background:#eee;border-radius:8px;display:flex;align-items:center;justify-content:center;">(Không có ảnh)</div>`;
-    }
+    const imageHtml = (p.images && p.images.length > 0)
+      ? `<img src="${p.images[0]}" alt="${p.name}" width="200" style="border-radius:8px;margin-bottom:10px;">
+        ${p.images.length > 1 ? `<button onclick="showProductImage(${index})">📷 Xem ${p.images.length} ảnh</button>` : ""}`
+      : `<div style="width:200px;height:120px;background:#eee;border-radius:8px;display:flex;align-items:center;justify-content:center;">(Không có ảnh)</div>`;
 
-    const status = (p.status || "").toLowerCase();
-    const statusColor = status.includes("còn") ? "green" : "red";
-    const statusText = status.includes("còn") ? "Còn hàng" : "Đã bán";
+    const status = (p.status || "").toLowerCase().includes("còn")
+      ? `<span style="color:green;font-weight:bold;">Còn hàng</span>`
+      : `<span style="color:red;font-weight:bold;">Đã bán</span>`;
 
-    function formatCreatedAt(isoString) {
-      const d = new Date(isoString);
-      return isNaN(d) ? isoString : d.toLocaleString("vi-VN");
-    }
+    const date = p.timestamp ? new Date(p.timestamp) : null;
+    const timeDisplay = (date && !isNaN(date)) ? date.toLocaleString('vi-VN') : "Không rõ";
 
     div.innerHTML = `
       <h3>${p.name}</h3>
       ${imageHtml}
       <p><strong>Giá:</strong> ${p.price}</p>
       <p><strong>Mô tả:</strong> ${p.description || "Không có"}</p>
-      <p><strong>Trạng thái:</strong> <span style="color:${statusColor}">${statusText}</span></p>
-      <p><strong>🕒 Thời gian:</strong> ${formatCreatedAt(p.timestamp)}</p>
-      <a href="https://zalo.me/0337457055" target="_blank">💬 Inbox Zalo</a>
+      <p><strong>Trạng thái:</strong> ${status}</p>
+      <p><strong>🕒 Thời gian:</strong> ${timeDisplay}</p>
+      <a href="https://zalo.me/0337457055" target="_blank" style="color:white;background:#0084ff;padding:8px 12px;border-radius:6px;display:inline-block;text-decoration:none;">💬 Inbox Zalo</a>
     `;
     grid.appendChild(div);
   });
 }
 
-function showProductImage(productId) {
-  const product = products.find(p => p.id == productId);
-  if (!product || !product.images) return;
-
+function showProductImage(index) {
   const modal = document.getElementById("imageListModal");
   const content = document.getElementById("imageListContent");
-  const imgs = typeof product.images === "string" ? product.images.split("|") : product.images;
-
-  content.innerHTML = imgs.map(img => `<img src="${img}" style="max-width:100%;margin:10px 0;">`).join("");
+  const images = products[index].images || [];
+  content.innerHTML = images.map(src => `<img src="${src}" style="max-width:100%;margin-bottom:10px;border-radius:10px;">`).join("");
   modal.style.display = "flex";
 }
 
@@ -64,32 +52,24 @@ function closeImageListModal() {
   document.getElementById("imageListModal").style.display = "none";
 }
 
+function filter(type) {
+  document.querySelectorAll(".menu button").forEach(btn => btn.classList.remove("active"));
+  event.target.classList.add("active");
+  renderProducts(type);
+}
+
 async function fetchProductsFromSheet() {
   try {
-    const res = await fetch("https://script.google.com/macros/s/AKfycbyiPIHkw5ve1ogTtrdSBQaUjtOmxfbq88YrBeRRM55Itgq2DLEZg6IK4B4J-cM_WECo/exec");
+    const res = await fetch("https://script.google.com/macros/s/AKfycbyiPIHkw5ve1ogTtrdSBQaUjtOmxfbq88YrBeRRM55Itgq2DLEZg6IK4B4J-cM_WECo/exec); // Đổi thành URL script mới
     const data = await res.json();
     products = data.map(p => ({
       ...p,
-      images: typeof p.images === "string" ? p.images.split("|").filter(Boolean) : []
+      images: typeof p.images === "string" ? p.images.split("|").map(i => i.trim()) : []
     }));
     renderProducts("iphone");
   } catch (err) {
-    console.error("❌ Lỗi tải sản phẩm:", err);
+    console.error("Lỗi tải sản phẩm:", err);
   }
 }
 
 window.addEventListener("DOMContentLoaded", fetchProductsFromSheet);
-.zalo-button {
-  display: inline-block;
-  background-color: #0084ff;
-  color: white;
-  padding: 8px 14px;
-  border-radius: 6px;
-  text-decoration: none;
-  font-weight: bold;
-  transition: 0.3s;
-}
-.zalo-button:hover {
-  background-color: #005fcc;
-}
-
