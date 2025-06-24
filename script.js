@@ -79,3 +79,17 @@ async function fetchProductsFromSheet() {
 }
 
 window.addEventListener("DOMContentLoaded", fetchProductsFromSheet);
+.zalo-button {
+  display: inline-block;
+  background-color: #0084ff;
+  color: white;
+  padding: 8px 14px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: 0.3s;
+}
+.zalo-button:hover {
+  background-color: #005fcc;
+}
+
