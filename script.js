@@ -75,5 +75,47 @@ async function fetchProducts() {
     console.error("Lỗi khi tải sản phẩm:", e);
   }
 }
+document.getElementById("ratingForm").addEventListener("submit", function (e) {
+  e.preventDefault();
+
+  const rating = document.querySelector('input[name="rating"]:checked');
+  const comment = document.getElementById("comment").value.trim();
+
+  if (!rating) {
+    alert("Vui lòng chọn số sao để đánh giá.");
+    return;
+  }
+
+  const newReview = {
+    rating: parseInt(rating.value),
+    comment,
+    time: new Date().toISOString(),
+  };
+
+  const storedReviews = JSON.parse(localStorage.getItem("reviews") || "[]");
+  storedReviews.push(newReview);
+  localStorage.setItem("reviews", JSON.stringify(storedReviews));
+
+  document.getElementById("ratingForm").reset();
+  updateAverageRating();
+  alert("🎉 Cảm ơn bạn đã đánh giá!");
+});
+
+function updateAverageRating() {
+  const storedReviews = JSON.parse(localStorage.getItem("reviews") || "[]");
+  if (storedReviews.length === 0) {
+    document.getElementById("avgRating").textContent = "🌟 Trung bình đánh giá: Chưa có đánh giá nào";
+    return;
+  }
+
+  const avg = storedReviews.reduce((acc, r) => acc + r.rating, 0) / storedReviews.length;
+  const rounded = avg.toFixed(1);
+  document.getElementById("avgRating").textContent = `🌟 Trung bình đánh giá: ${rounded} / 5 (${storedReviews.length} đánh giá)`;
+}
+
+window.addEventListener("DOMContentLoaded", () => {
+  fetchProducts();
+  updateAverageRating();
+});
 
 window.addEventListener("DOMContentLoaded", fetchProducts);
