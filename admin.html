@@ -142,6 +142,10 @@
 
     window.addEventListener('DOMContentLoaded', loadProducts);
   </script>
-
+<script>
+  if (localStorage.getItem('isAdmin') !== 'true') {
+    window.location.href = 'admin-login.html';
+  }
+</script>
 </body>
 </html>
