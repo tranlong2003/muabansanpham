@@ -1,4 +1,4 @@
-// === script.js (phiên bản đã đồng bộ hoàn chỉnh) ===
+// === script.js (bản đã sửa toàn bộ & đồng bộ hoàn chỉnh) ===
 
 let products = [];
 
@@ -102,7 +102,7 @@ async function fetchProductsFromSheet() {
 
     products = data.map(p => ({
       ...p,
-      images: typeof p.images === "string" ? p.images.split("|").map(s => s.trim()).filter(Boolean) : []
+      images: (p.images || "").split("|").map(s => s.trim()).filter(Boolean)
     }));
 
     renderProducts("iphone");
