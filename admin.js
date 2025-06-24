@@ -44,7 +44,7 @@
   <div id="productList"></div>
 
   <script>
-    const API_URL = 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec';
+    const API_URL = 'https://script.google.com/macros/s/AKfycbyiPIHkw5ve1ogTtrdSBQaUjtOmxfbq88YrBeRRM55Itgq2DLEZg6IK4B4J-cM_WECo/exec';
     let currentProducts = [];
 
     document.getElementById('imageFile').addEventListener('change', function () {
