@@ -1,8 +1,5 @@
-// === script.js (bản đã sửa toàn bộ & đồng bộ hoàn chỉnh) ===
-
 let products = [];
 
-// ====== HIỂN THỊ SẢN PHẨM ======
 function renderProducts(filterType) {
   const grid = document.getElementById("productGrid");
   grid.innerHTML = "";
@@ -18,40 +15,24 @@ function renderProducts(filterType) {
     const div = document.createElement("div");
     div.className = "product";
 
-    const realIndex = products.findIndex(prod => prod.id === p.id);
-
     let imageHtml = "";
     if (p.images && p.images.length > 0) {
+      const imgs = typeof p.images === "string" ? p.images.split("|") : p.images;
       imageHtml = `
-        <img src="${p.images[0]}" alt="${p.name}" width="200" style="border-radius:8px;margin-bottom:10px;">
-        ${p.images.length > 1 ? `<button class="image-btn" onclick="showProductImage(${realIndex})">📷 Xem ${p.images.length} ảnh</button>` : ""}
+        <img src="${imgs[0]}" alt="${p.name}" width="200" style="border-radius:8px;margin-bottom:10px;">
+        ${imgs.length > 1 ? `<button onclick="showProductImage(${p.id})">📷 Xem ${imgs.length} ảnh</button>` : ""}
       `;
     } else {
-      imageHtml = `<div style="width:200px;height:120px;background:#eee;border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:10px;">(Chưa có ảnh)</div>`;
+      imageHtml = `<div style="width:200px;height:120px;background:#eee;border-radius:8px;display:flex;align-items:center;justify-content:center;">(Không có ảnh)</div>`;
     }
 
-    // === MÀU TRẠNG THÁI ===
-    const statusRaw = (p.status || "").toLowerCase().trim();
-    let statusColor = "red";
-    let statusText = "Đã bán";
+    const status = (p.status || "").toLowerCase();
+    const statusColor = status.includes("còn") ? "green" : "red";
+    const statusText = status.includes("còn") ? "Còn hàng" : "Đã bán";
 
-    if (statusRaw.includes("còn")) {
-      statusColor = "green";
-      statusText = "Còn hàng";
-    }
-
-    // === FORMAT THỜI GIAN ===
     function formatCreatedAt(isoString) {
-      if (!isoString) return "Không rõ";
-      const date = new Date(isoString);
-      if (isNaN(date)) return isoString; // hiển thị chuỗi gốc nếu không hợp lệ
-      return date.toLocaleString('vi-VN', {
-        hour: '2-digit',
-        minute: '2-digit',
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric'
-      });
+      const d = new Date(isoString);
+      return isNaN(d) ? isoString : d.toLocaleString("vi-VN");
     }
 
     div.innerHTML = `
@@ -59,28 +40,23 @@ function renderProducts(filterType) {
       ${imageHtml}
       <p><strong>Giá:</strong> ${p.price}</p>
       <p><strong>Mô tả:</strong> ${p.description || "Không có"}</p>
-      <p><strong>Trạng thái:</strong> 
-        <span style="
-          color: ${statusColor}; 
-          font-weight: bold; 
-          font-style: italic; 
-          font-size: 16px;
-          text-shadow: 0.5px 0.5px 1px rgba(0,0,0,0.1);
-        ">${statusText}</span>
-      </p>
-      <p><strong>🕒 Thời gian đăng:</strong> ${formatCreatedAt(p.timestamp)}</p>
-      <a href="https://zalo.me/0337457055" target="_blank" class="zalo-button">💬 Inbox Zalo</a>
+      <p><strong>Trạng thái:</strong> <span style="color:${statusColor}">${statusText}</span></p>
+      <p><strong>🕒 Thời gian:</strong> ${formatCreatedAt(p.timestamp)}</p>
+      <a href="https://zalo.me/0337457055" target="_blank">💬 Inbox Zalo</a>
     `;
     grid.appendChild(div);
   });
 }
 
-function showProductImage(index) {
+function showProductImage(productId) {
+  const product = products.find(p => p.id == productId);
+  if (!product || !product.images) return;
+
   const modal = document.getElementById("imageListModal");
   const content = document.getElementById("imageListContent");
-  const images = products[index].images || [];
+  const imgs = typeof product.images === "string" ? product.images.split("|") : product.images;
 
-  content.innerHTML = images.map(img => `<img src="${img}" style="max-width:100%;border-radius:12px;margin-bottom:10px;">`).join("");
+  content.innerHTML = imgs.map(img => `<img src="${img}" style="max-width:100%;margin:10px 0;">`).join("");
   modal.style.display = "flex";
 }
 
@@ -88,26 +64,17 @@ function closeImageListModal() {
   document.getElementById("imageListModal").style.display = "none";
 }
 
-function filter(type) {
-  document.querySelectorAll(".menu button").forEach(btn => btn.classList.remove("active"));
-  event.target.classList.add("active");
-  renderProducts(type);
-}
-
-// ====== LẤY TỪ GOOGLE SHEET ======
 async function fetchProductsFromSheet() {
   try {
     const res = await fetch("https://script.google.com/macros/s/AKfycbwERNk5suUjA5KpJnrGieSUoTE5T6DG9wl4swHqHZ6OAakmqEiLn29NJKSZZuIkN3Mr/exec");
     const data = await res.json();
-
     products = data.map(p => ({
       ...p,
-      images: (p.images || "").split("|").map(s => s.trim()).filter(Boolean)
+      images: typeof p.images === "string" ? p.images.split("|").filter(Boolean) : []
     }));
-
     renderProducts("iphone");
-  } catch (error) {
-    console.error("❌ Lỗi tải sản phẩm:", error);
+  } catch (err) {
+    console.error("❌ Lỗi tải sản phẩm:", err);
   }
 }
 
