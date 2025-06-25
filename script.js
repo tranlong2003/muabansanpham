@@ -11,25 +11,25 @@ function renderProducts(type) {
     return;
   }
 
-  filtered.forEach((p, index) => {
-  const images = typeof p.images === "string" ? p.images.split("|") : [];
-  
-  const imgHTML = images.length
-    ? `
-      <img src="${images[0]}" alt="${p.name}" style="width:100%;border-radius:8px;">
-      <button class="view-images-btn" onclick="showProductImage(${index})">
-        📷 Xem ${images.length} ảnh
-      </button>
-      `
-    : `
-      <div style="background:#eee;height:120px;border-radius:8px;display:flex;align-items:center;justify-content:center;">
-        (Không có ảnh)
-      </div>
-    `;
+  filtered.forEach((p) => {
+    const images = typeof p.images === "string" ? p.images.split("|") : [];
 
+    const imgHTML = images.length
+      ? `
+        <img src="${images[0]}" alt="${p.name}" style="width:100%;border-radius:8px;">
+        ${images.length > 1 ? `
+          <button class="view-images-btn" onclick='showProductImage(${JSON.stringify(images)})'>
+            📷 Xem ${images.length} ảnh
+          </button>
+        ` : ""}
+      `
+      : `
+        <div style="background:#eee;height:120px;border-radius:8px;display:flex;align-items:center;justify-content:center;">
+          (Không có ảnh)
+        </div>
+      `;
 
     const status = (p.status || "").toLowerCase().includes("còn") ? `<span style="color:green;font-weight:bold;">Còn hàng</span>` : `<span style="color:red;font-weight:bold;">Đã bán</span>`;
-
     const time = p.timestamp ? new Date(p.timestamp).toLocaleString("vi-VN") : "Không rõ";
 
     const div = document.createElement("div");
@@ -38,7 +38,7 @@ function renderProducts(type) {
       <h3>${p.name}</h3>
       ${imgHTML}
       <p><strong>Giá:</strong> ${p.price}</p>
-      <p><strong>Mô tả:</strong> ${p.description}</p>
+      <p><strong>Mô tả:</strong> ${p.description || "Không có"}</p>
       <p><strong>Trạng thái:</strong> ${status}</p>
       <p><strong>🕒 Thời gian:</strong> ${time}</p>
       <a href="https://zalo.me/0337457055" target="_blank" class="zalo-button">💬 Inbox Zalo</a>
@@ -47,10 +47,9 @@ function renderProducts(type) {
   });
 }
 
-function showProductImage(index) {
+function showProductImage(images) {
   const modal = document.getElementById("imageListModal");
   const content = document.getElementById("imageListContent");
-  const images = products[index].images?.split("|") || [];
   content.innerHTML = images.map(img => `<img src="${img}" style="width:100%;border-radius:12px;margin-bottom:10px;">`).join("");
   modal.style.display = "flex";
 }
@@ -75,47 +74,5 @@ async function fetchProducts() {
     console.error("Lỗi khi tải sản phẩm:", e);
   }
 }
-document.getElementById("ratingForm").addEventListener("submit", function (e) {
-  e.preventDefault();
-
-  const rating = document.querySelector('input[name="rating"]:checked');
-  const comment = document.getElementById("comment").value.trim();
-
-  if (!rating) {
-    alert("Vui lòng chọn số sao để đánh giá.");
-    return;
-  }
-
-  const newReview = {
-    rating: parseInt(rating.value),
-    comment,
-    time: new Date().toISOString(),
-  };
-
-  const storedReviews = JSON.parse(localStorage.getItem("reviews") || "[]");
-  storedReviews.push(newReview);
-  localStorage.setItem("reviews", JSON.stringify(storedReviews));
-
-  document.getElementById("ratingForm").reset();
-  updateAverageRating();
-  alert("🎉 Cảm ơn bạn đã đánh giá!");
-});
-
-function updateAverageRating() {
-  const storedReviews = JSON.parse(localStorage.getItem("reviews") || "[]");
-  if (storedReviews.length === 0) {
-    document.getElementById("avgRating").textContent = "🌟 Trung bình đánh giá: Chưa có đánh giá nào";
-    return;
-  }
-
-  const avg = storedReviews.reduce((acc, r) => acc + r.rating, 0) / storedReviews.length;
-  const rounded = avg.toFixed(1);
-  document.getElementById("avgRating").textContent = `🌟 Trung bình đánh giá: ${rounded} / 5 (${storedReviews.length} đánh giá)`;
-}
-
-window.addEventListener("DOMContentLoaded", () => {
-  fetchProducts();
-  updateAverageRating();
-});
 
 window.addEventListener("DOMContentLoaded", fetchProducts);
